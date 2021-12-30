@@ -937,10 +937,10 @@ export default class Parser {
         let tokens = this.tokens,
             args = [];
         tokens.expect(Types.COLON);
-        while (!tokens.test(Types.PIPE) && !tokens.test(Types.EXPRESSION_END)) {
+        while (!tokens.test(Types.PIPE) && !tokens.test(Types.EXPRESSION_END) && !tokens.test(Types.TAG_END)) {
             args.push(this.matchExpression());
         }
-        tokens.expect([Types.PIPE, Types.EXPRESSION_END]);
+        tokens.expect([Types.PIPE, Types.EXPRESSION_END, Types.TAG_END]);
         tokens.index-- //must back to last token
         return args;
     }
