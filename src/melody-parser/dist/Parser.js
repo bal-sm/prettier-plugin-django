@@ -893,7 +893,7 @@ var Parser = /*#__PURE__*/function () {
             args = void 0;
 
         if (tokens.test(Types.COLON)) {
-          args = this.matchArguments();
+          args = this.matchFilterArguments();
         } else {
           args = [];
         }
@@ -917,40 +917,40 @@ var Parser = /*#__PURE__*/function () {
       }
 
       return target;
-    } // matchArguments() {
-    //     let tokens = this.tokens,
-    //         args = [];
-    //     tokens.expect(Types.LPAREN);
-    //     while (!tokens.test(Types.RPAREN) && !tokens.test(Types.EOF)) {
-    //         if (
-    //             tokens.test(Types.SYMBOL) &&
-    //             tokens.lat(1) === Types.ASSIGNMENT
-    //         ) {
-    //             const name = tokens.next();
-    //             tokens.next();
-    //             const value = this.matchExpression();
-    //             const arg = new n.NamedArgumentExpression(
-    //                 createNode(n.Identifier, name, name.text),
-    //                 value
-    //             );
-    //             copyEnd(arg, value);
-    //             args.push(arg);
-    //         } else {
-    //             args.push(this.matchExpression());
-    //         }
-    //         if (!tokens.test(Types.COMMA)) {
-    //             tokens.expect(Types.RPAREN);
-    //             return args;
-    //         }
-    //         tokens.expect(Types.COMMA);
-    //     }
-    //     tokens.expect(Types.RPAREN);
-    //     return args;
-    // }
-
+    }
   }, {
     key: "matchArguments",
     value: function matchArguments() {
+      var tokens = this.tokens,
+          args = [];
+      tokens.expect(Types.LPAREN);
+
+      while (!tokens.test(Types.RPAREN) && !tokens.test(Types.EOF)) {
+        if (tokens.test(Types.SYMBOL) && tokens.lat(1) === Types.ASSIGNMENT) {
+          var name = tokens.next();
+          tokens.next();
+          var value = this.matchExpression();
+          var arg = new n.NamedArgumentExpression((0, _util.createNode)(n.Identifier, name, name.text), value);
+          (0, _util.copyEnd)(arg, value);
+          args.push(arg);
+        } else {
+          args.push(this.matchExpression());
+        }
+
+        if (!tokens.test(Types.COMMA)) {
+          tokens.expect(Types.RPAREN);
+          return args;
+        }
+
+        tokens.expect(Types.COMMA);
+      }
+
+      tokens.expect(Types.RPAREN);
+      return args;
+    }
+  }, {
+    key: "matchFilterArguments",
+    value: function matchFilterArguments() {
       var tokens = this.tokens,
           args = [];
       tokens.expect(Types.COLON);

@@ -876,7 +876,7 @@ export default class Parser {
                 name = createNode(n.Identifier, token, token.text),
                 args;
             if (tokens.test(Types.COLON)) {
-                args = this.matchArguments();
+                args = this.matchFilterArguments();
             } else {
                 args = [];
             }
@@ -901,39 +901,39 @@ export default class Parser {
         return target;
     }
 
-    // matchArguments() {
-    //     let tokens = this.tokens,
-    //         args = [];
-    //     tokens.expect(Types.LPAREN);
-    //     while (!tokens.test(Types.RPAREN) && !tokens.test(Types.EOF)) {
-    //         if (
-    //             tokens.test(Types.SYMBOL) &&
-    //             tokens.lat(1) === Types.ASSIGNMENT
-    //         ) {
-    //             const name = tokens.next();
-    //             tokens.next();
-    //             const value = this.matchExpression();
-    //             const arg = new n.NamedArgumentExpression(
-    //                 createNode(n.Identifier, name, name.text),
-    //                 value
-    //             );
-    //             copyEnd(arg, value);
-    //             args.push(arg);
-    //         } else {
-    //             args.push(this.matchExpression());
-    //         }
-
-    //         if (!tokens.test(Types.COMMA)) {
-    //             tokens.expect(Types.RPAREN);
-    //             return args;
-    //         }
-    //         tokens.expect(Types.COMMA);
-    //     }
-    //     tokens.expect(Types.RPAREN);
-    //     return args;
-    // }
-
     matchArguments() {
+        let tokens = this.tokens,
+            args = [];
+        tokens.expect(Types.LPAREN);
+        while (!tokens.test(Types.RPAREN) && !tokens.test(Types.EOF)) {
+            if (
+                tokens.test(Types.SYMBOL) &&
+                tokens.lat(1) === Types.ASSIGNMENT
+            ) {
+                const name = tokens.next();
+                tokens.next();
+                const value = this.matchExpression();
+                const arg = new n.NamedArgumentExpression(
+                    createNode(n.Identifier, name, name.text),
+                    value
+                );
+                copyEnd(arg, value);
+                args.push(arg);
+            } else {
+                args.push(this.matchExpression());
+            }
+
+            if (!tokens.test(Types.COMMA)) {
+                tokens.expect(Types.RPAREN);
+                return args;
+            }
+            tokens.expect(Types.COMMA);
+        }
+        tokens.expect(Types.RPAREN);
+        return args;
+    }
+
+    matchFilterArguments() {
         let tokens = this.tokens,
             args = [];
         tokens.expect(Types.COLON);
