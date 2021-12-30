@@ -1,0 +1,10 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": "commonjs" //默认都是支持 CommonJS
+            }
+        ]
+    ]
+}

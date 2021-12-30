@@ -10,3 +10,5 @@ __pycache__/
 *.pyc
 test_files
 tests/prettier_*
+yarn.lock
+test.js

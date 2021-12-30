@@ -1,3 +1,5 @@
+# update for django template eg: filter args
+
 # Prettier for Melody
 
 ![Prettier Banner](https://raw.githubusercontent.com/prettier/prettier-logo/master/images/prettier-banner-light.png)
