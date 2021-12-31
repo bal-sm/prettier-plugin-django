@@ -1,4 +1,4 @@
-const { CharStream, Lexer, TokenStream, Parser } = require("./melody-parser/dist/index.js");
+const { CharStream, Lexer, TokenStream, Parser } = require("./melody-parser/src");
 const { extension: coreExtension } = require("melody-extension-core");
 const {
     getAdditionalMelodyExtensions,
