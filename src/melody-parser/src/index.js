@@ -40,7 +40,7 @@ function createExtendedParser(code, options, ...extensions) {
     let passedOptions = options;
     const passedExtensions = extensions;
 
-    if ((0, isMelodyExtension)(options)) {
+    if (isMelodyExtension(options)) {
         // Variant without options parameter: createExtendedParser(code, ...extensions)
         passedOptions = undefined;
         passedExtensions.unshift(options);
@@ -96,4 +96,4 @@ module.exports = {
     hasTagStartTokenTrimLeft,
     hasTagEndTokenTrimRight,
     Types,
-}
+};

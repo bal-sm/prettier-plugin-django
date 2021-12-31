@@ -121,17 +121,17 @@ class Parser {
 
     parse(test = null) {
         let tokens = this.tokens,
-            p = (0, setStartFromToken)(new n.SequenceExpression(), tokens.la(0));
+            p = setStartFromToken(new n.SequenceExpression(), tokens.la(0));
 
         while (!tokens.test(Types.EOF)) {
             const token = tokens.next();
 
             if (!p) {
-                p = (0, setStartFromToken)(new n.SequenceExpression(), token);
+                p = setStartFromToken(new n.SequenceExpression(), token);
             }
 
             if (test && test(tokens.la(0).text, token, tokens)) {
-                (0, setEndFromToken)(p, token);
+                setEndFromToken(p, token);
                 return p;
             }
 
@@ -141,9 +141,9 @@ class Parser {
                         const expression = this.matchExpression();
                         const statement = new n.PrintExpressionStatement(expression);
                         const endToken = tokens.expect(Types.EXPRESSION_END);
-                        (0, setStartFromToken)(statement, token);
-                        (0, setEndFromToken)(statement, endToken);
-                        (0, setEndFromToken)(p, endToken);
+                        setStartFromToken(statement, token);
+                        setEndFromToken(statement, endToken);
+                        setEndFromToken(p, endToken);
                         statement.trimLeft = !!expression.trimLeft;
                         statement.trimRight = !!expression.trimRight;
                         p.add(statement);
@@ -156,16 +156,16 @@ class Parser {
 
                 case Types.TEXT:
                     {
-                        const textStringLiteral = (0, createNode)(n.StringLiteral, token, token.text);
-                        const textTextStatement = (0, createNode)(n.PrintTextStatement, token, textStringLiteral);
+                        const textStringLiteral = createNode(n.StringLiteral, token, token.text);
+                        const textTextStatement = createNode(n.PrintTextStatement, token, textStringLiteral);
                         p.add(textTextStatement);
                         break;
                     }
 
                 case Types.ENTITY:
                     {
-                        const entityStringLiteral = (0, createNode)(n.StringLiteral, token, !this.options.decodeEntities || this.options.preserveSourceLiterally ? token.text : he.decode(token.text));
-                        const entityTextStatement = (0, createNode)(n.PrintTextStatement, token, entityStringLiteral);
+                        const entityStringLiteral = createNode(n.StringLiteral, token, !this.options.decodeEntities || this.options.preserveSourceLiterally ? token.text : he.decode(token.text));
+                        const entityTextStatement = createNode(n.PrintTextStatement, token, entityStringLiteral);
                         p.add(entityTextStatement);
                         break;
                     }
@@ -187,8 +187,8 @@ class Parser {
 
                 case Types.COMMENT:
                     if (!this.options.ignoreComments) {
-                        const stringLiteral = (0, createNode)(n.StringLiteral, token, token.text);
-                        const twigComment = (0, createNode)(n.TwigComment, token, stringLiteral);
+                        const stringLiteral = createNode(n.StringLiteral, token, token.text);
+                        const twigComment = createNode(n.TwigComment, token, stringLiteral);
                         p.add(twigComment);
                     }
 
@@ -196,8 +196,8 @@ class Parser {
 
                 case Types.HTML_COMMENT:
                     if (!this.options.ignoreHtmlComments) {
-                        const stringLiteral = (0, createNode)(n.StringLiteral, token, token.text);
-                        const htmlComment = (0, createNode)(n.HtmlComment, token, stringLiteral);
+                        const stringLiteral = createNode(n.StringLiteral, token, token.text);
+                        const htmlComment = createNode(n.HtmlComment, token, stringLiteral);
                         p.add(htmlComment);
                     }
 
@@ -230,15 +230,15 @@ class Parser {
 
         while (currentToken = tokens.next()) {
             if (currentToken.type === Types.SYMBOL) {
-                const symbol = (0, createNode)(n.Identifier, currentToken, currentToken.text);
+                const symbol = createNode(n.Identifier, currentToken, currentToken.text);
                 declaration.parts.push(symbol);
             } else if (currentToken.type === Types.STRING_START) {
                 const stringToken = tokens.expect(Types.STRING);
-                declaration.parts.push((0, createNode)(n.StringLiteral, stringToken, stringToken.text));
+                declaration.parts.push(createNode(n.StringLiteral, stringToken, stringToken.text));
                 tokens.expect(Types.STRING_END);
             } else if (currentToken.type === Types.EXPRESSION_START) {
                 const expression = this.matchExpression();
-                declaration.parts.push((0, copyLoc)(new n.PrintExpressionStatement(expression), expression));
+                declaration.parts.push(copyLoc(new n.PrintExpressionStatement(expression), expression));
                 tokens.expect(Types.EXPRESSION_END);
             } else if (currentToken.type === Types.ELEMENT_END) {
                 break;
@@ -251,8 +251,8 @@ class Parser {
             }
         }
 
-        (0, setStartFromToken)(declaration, declarationStartToken);
-        (0, setEndFromToken)(declaration, currentToken);
+        setStartFromToken(declaration, declarationStartToken);
+        setEndFromToken(declaration, currentToken);
         return declaration;
     }
     /**
@@ -307,9 +307,9 @@ class Parser {
             }
         }
 
-        (0, setStartFromToken)(element, tagStartToken);
-        (0, setEndFromToken)(element, tokens.la(-1));
-        (0, setMarkFromToken)(element, 'elementNameLoc', elementNameToken);
+        setStartFromToken(element, tagStartToken);
+        setEndFromToken(element, tokens.la(-1));
+        setMarkFromToken(element, 'elementNameLoc', elementNameToken);
         return element;
     }
 
@@ -319,8 +319,8 @@ class Parser {
 
             if (key) {
                 const keyNode = new n.Identifier(key.text);
-                (0, setStartFromToken)(keyNode, key);
-                (0, setEndFromToken)(keyNode, key); // match an attribute
+                setStartFromToken(keyNode, key);
+                setEndFromToken(keyNode, key); // match an attribute
 
                 if (tokens.nextIf(Types.ASSIGNMENT)) {
                     const start = tokens.expect(Types.STRING_START);
@@ -330,7 +330,7 @@ class Parser {
 
                     while (!tokens.test(Types.STRING_END)) {
                         if (canBeString && (token = tokens.nextIf(Types.STRING))) {
-                            nodes[nodes.length] = (0, createNode)(n.StringLiteral, token, token.text);
+                            nodes[nodes.length] = createNode(n.StringLiteral, token, token.text);
                             canBeString = false;
                         } else if (token = tokens.nextIf(Types.EXPRESSION_START)) {
                             nodes[nodes.length] = this.matchExpression();
@@ -344,7 +344,7 @@ class Parser {
                     tokens.expect(Types.STRING_END);
 
                     if (!nodes.length) {
-                        const node = (0, createNode)(n.StringLiteral, start, '');
+                        const node = createNode(n.StringLiteral, start, '');
                         nodes.push(node);
                     }
 
@@ -358,7 +358,7 @@ class Parser {
                         expr = new n.BinaryConcatExpression(expr, nodes[i]);
                         expr.loc.start.line = line;
                         expr.loc.start.column = column;
-                        (0, copyEnd)(expr, expr.right);
+                        copyEnd(expr, expr.right);
                     } // Distinguish between BinaryConcatExpression generated by
                     // this Parser (implicit before parsing), and those that the
                     // user wrote explicitly.
@@ -369,11 +369,11 @@ class Parser {
                     }
 
                     const attr = new n.Attribute(keyNode, expr);
-                    (0, copyStart)(attr, keyNode);
-                    (0, copyEnd)(attr, expr);
+                    copyStart(attr, keyNode);
+                    copyEnd(attr, expr);
                     element.attributes.push(attr);
                 } else {
-                    element.attributes.push((0, copyLoc)(new n.Attribute(keyNode), keyNode));
+                    element.attributes.push(copyLoc(new n.Attribute(keyNode), keyNode));
                 }
             } else if (tokens.nextIf(Types.EXPRESSION_START)) {
                 element.attributes.push(this.matchExpression());
@@ -394,7 +394,7 @@ class Parser {
 
     getGenericParserFor(tagName) {
         if (this.options.multiTags[tagName]) {
-            return (0, createMultiTagParser)(tagName, this.options.multiTags[tagName]);
+            return createMultiTagParser(tagName, this.options.multiTags[tagName]);
         } else {
             return GenericTagParser;
         }
@@ -424,9 +424,9 @@ class Parser {
             result.trimRight = tagEndToken.text.startsWith('-');
         }
 
-        (0, setStartFromToken)(result, tagStartToken);
-        (0, setEndFromToken)(result, tagEndToken);
-        (0, setMarkFromToken)(result, 'tagNameLoc', tag);
+        setStartFromToken(result, tagStartToken);
+        setEndFromToken(result, tagEndToken);
+        setMarkFromToken(result, 'tagNameLoc', tag);
         return result;
     }
 
@@ -459,7 +459,7 @@ class Parser {
         var result = expr;
 
         if (precedence === 0) {
-            (0, setEndFromToken)(expr, tokens.la(-1));
+            setEndFromToken(expr, tokens.la(-1));
             result = this.matchConditionalExpression(expr); // Update the local token variable because the stream pointer already advanced.
 
             token = tokens.la(0);
@@ -475,8 +475,8 @@ class Parser {
         }
 
         const exprEndToken = tokens.la(-1);
-        (0, setStartFromToken)(result, exprStartToken);
-        (0, setEndFromToken)(result, exprEndToken);
+        setStartFromToken(result, exprStartToken);
+        setEndFromToken(result, exprEndToken);
         return result;
     }
 
@@ -508,15 +508,15 @@ class Parser {
 
         switch (token.type) {
             case Types.NULL:
-                node = (0, createNode)(n.NullLiteral, tokens.next());
+                node = createNode(n.NullLiteral, tokens.next());
                 break;
 
             case Types.FALSE:
-                node = (0, createNode)(n.BooleanLiteral, tokens.next(), false);
+                node = createNode(n.BooleanLiteral, tokens.next(), false);
                 break;
 
             case Types.TRUE:
-                node = (0, createNode)(n.BooleanLiteral, tokens.next(), true);
+                node = createNode(n.BooleanLiteral, tokens.next(), true);
                 break;
 
             case Types.SYMBOL:
@@ -524,17 +524,17 @@ class Parser {
 
                 if (tokens.test(Types.LPAREN)) {
                     // SYMBOL '(' arguments* ')'
-                    node = new n.CallExpression((0, createNode)(n.Identifier, token, token.text), this.matchArguments());
-                    (0, copyStart)(node, node.callee);
-                    (0, setEndFromToken)(node, tokens.la(-1)); // ')'
+                    node = new n.CallExpression(createNode(n.Identifier, token, token.text), this.matchArguments());
+                    copyStart(node, node.callee);
+                    setEndFromToken(node, tokens.la(-1)); // ')'
                 } else {
-                    node = (0, createNode)(n.Identifier, token, token.text);
+                    node = createNode(n.Identifier, token, token.text);
                 }
 
                 break;
 
             case Types.NUMBER:
-                node = (0, createNode)(n.NumericLiteral, token, Number(tokens.next()));
+                node = createNode(n.NumericLiteral, token, Number(tokens.next()));
                 break;
 
             case Types.STRING_START:
@@ -573,7 +573,7 @@ class Parser {
 
         while (!tokens.test(Types.STRING_END)) {
             if (canBeString && (token = tokens.nextIf(Types.STRING))) {
-                nodes[nodes.length] = (0, createNode)(n.StringLiteral, token, token.text);
+                nodes[nodes.length] = createNode(n.StringLiteral, token, token.text);
                 canBeString = false;
             } else if (token = tokens.nextIf(Types.INTERPOLATION_START)) {
                 nodes[nodes.length] = this.matchExpression();
@@ -587,7 +587,7 @@ class Parser {
         const stringEnd = tokens.expect(Types.STRING_END);
 
         if (!nodes.length) {
-            return (0, setEndFromToken)((0, createNode)(n.StringLiteral, stringStart, ''), stringEnd);
+            return setEndFromToken(createNode(n.StringLiteral, stringStart, ''), stringEnd);
         }
 
         let expr = nodes[0];
@@ -600,15 +600,15 @@ class Parser {
             expr = new n.BinaryConcatExpression(expr, nodes[i]);
             expr.loc.start.line = line;
             expr.loc.start.column = column;
-            (0, copyEnd)(expr, expr.right);
+            copyEnd(expr, expr.right);
         }
 
         if (nodes.length > 1) {
             expr.wasImplicitConcatenation = true;
         }
 
-        (0, setStartFromToken)(expr, stringStart);
-        (0, setEndFromToken)(expr, stringEnd);
+        setStartFromToken(expr, stringStart);
+        setEndFromToken(expr, stringEnd);
         return expr;
     }
 
@@ -641,7 +641,7 @@ class Parser {
                 line,
                 column
             };
-            (0, copyEnd)(condition, alternate || consequent);
+            copyEnd(condition, alternate || consequent);
         }
 
         return condition;
@@ -651,7 +651,7 @@ class Parser {
         let tokens = this.tokens,
             array = new n.ArrayExpression(),
             start = tokens.expect(Types.LBRACE);
-        (0, setStartFromToken)(array, start);
+        setStartFromToken(array, start);
 
         while (!tokens.test(Types.RBRACE) && !tokens.test(Types.EOF)) {
             array.elements.push(this.matchExpression());
@@ -665,7 +665,7 @@ class Parser {
             }
         }
 
-        (0, setEndFromToken)(array, tokens.expect(Types.RBRACE));
+        setEndFromToken(array, tokens.expect(Types.RBRACE));
         return array;
     }
 
@@ -674,7 +674,7 @@ class Parser {
             token,
             obj = new n.ObjectExpression(),
             startToken = tokens.expect(Types.LBRACKET);
-        (0, setStartFromToken)(obj, startToken);
+        setStartFromToken(obj, startToken);
 
         while (!tokens.test(Types.RBRACKET) && !tokens.test(Types.EOF)) {
             let computed = false,
@@ -688,9 +688,9 @@ class Parser {
                     computed = true;
                 }
             } else if (token = tokens.nextIf(Types.SYMBOL)) {
-                key = (0, createNode)(n.Identifier, token, token.text);
+                key = createNode(n.Identifier, token, token.text);
             } else if (token = tokens.nextIf(Types.NUMBER)) {
-                key = (0, createNode)(n.NumericLiteral, token, Number(token.text));
+                key = createNode(n.NumericLiteral, token, Number(token.text));
             } else if (tokens.test(Types.LPAREN)) {
                 key = this.matchExpression();
                 computed = true;
@@ -705,8 +705,8 @@ class Parser {
             tokens.expect(Types.COLON);
             value = this.matchExpression();
             const prop = new n.ObjectProperty(key, value, computed);
-            (0, copyStart)(prop, key);
-            (0, copyEnd)(prop, value);
+            copyStart(prop, key);
+            copyEnd(prop, value);
             obj.properties.push(prop);
 
             if (!tokens.test(Types.RBRACKET)) {
@@ -718,7 +718,7 @@ class Parser {
             }
         }
 
-        (0, setEndFromToken)(obj, tokens.expect(Types.RBRACKET));
+        setEndFromToken(obj, tokens.expect(Types.RBRACKET));
         return obj;
     }
 
@@ -750,9 +750,9 @@ class Parser {
                 property;
 
             if (token.type === Types.SYMBOL) {
-                property = (0, createNode)(n.Identifier, token, token.text);
+                property = createNode(n.Identifier, token, token.text);
             } else if (token.type === Types.NUMBER) {
-                property = (0, createNode)(n.NumericLiteral, token, Number(token.text));
+                property = createNode(n.NumericLiteral, token, Number(token.text));
                 computed = true;
             } else {
                 this.error({
@@ -763,13 +763,13 @@ class Parser {
             }
 
             const memberExpr = new n.MemberExpression(node, property, computed);
-            (0, copyStart)(memberExpr, node);
-            (0, copyEnd)(memberExpr, property);
+            copyStart(memberExpr, node);
+            copyEnd(memberExpr, property);
 
             if (tokens.test(Types.LPAREN)) {
                 const callExpr = new n.CallExpression(memberExpr, this.matchArguments());
-                (0, copyStart)(callExpr, memberExpr);
-                (0, setEndFromToken)(callExpr, tokens.la(-1));
+                copyStart(callExpr, memberExpr);
+                setEndFromToken(callExpr, tokens.la(-1));
                 return callExpr;
             }
 
@@ -792,12 +792,12 @@ class Parser {
             }
 
             if (arg) {
-                return (0, setEndFromToken)((0, copyStart)(new n.MemberExpression(node, arg, true), node), tokens.expect(Types.RBRACE));
+                return setEndFromToken(copyStart(new n.MemberExpression(node, arg, true), node), tokens.expect(Types.RBRACE));
             } else {
                 // slice
                 const result = new n.SliceExpression(node, start, tokens.test(Types.RBRACE) ? null : this.matchExpression());
-                (0, copyStart)(result, node);
-                (0, setEndFromToken)(result, tokens.expect(Types.RBRACE));
+                copyStart(result, node);
+                setEndFromToken(result, tokens.expect(Types.RBRACE));
                 return result;
             }
         }
@@ -809,25 +809,30 @@ class Parser {
 
         while (!tokens.test(Types.EOF)) {
             let token = tokens.expect(Types.SYMBOL),
-                name = (0, createNode)(n.Identifier, token, token.text),
+                name = createNode(n.Identifier, token, token.text),
                 args;
 
-            if (tokens.test(Types.COLON)) {
-                args = this.matchFilterArguments();
+            var isDjango = false;
+            if (tokens.test(Types.LPAREN)) {
+                args = this.matchArguments();
+            } else if (tokens.test(Types.COLON)) {
+                args = this.matchDjangoFilterArguments();
+                isDjango = true;
             } else {
                 args = [];
             }
 
             const newTarget = new n.FilterExpression(target, name, args);
-            (0, copyStart)(newTarget, target);
+            copyStart(newTarget, target);
 
             if (newTarget.arguments.length) {
-                (0, copyEnd)(newTarget, newTarget.arguments[newTarget.arguments.length - 1]);
+                copyEnd(newTarget, newTarget.arguments[newTarget.arguments.length - 1]);
             } else {
-                (0, copyEnd)(newTarget, target);
+                copyEnd(newTarget, target);
             }
 
             target = newTarget;
+            target.isDjango = isDjango;
 
             if (!tokens.test(Types.PIPE) || tokens.test(Types.EOF)) {
                 break;
@@ -849,8 +854,8 @@ class Parser {
                 const name = tokens.next();
                 tokens.next();
                 const value = this.matchExpression();
-                const arg = new n.NamedArgumentExpression((0, createNode)(n.Identifier, name, name.text), value);
-                (0, copyEnd)(arg, value);
+                const arg = new n.NamedArgumentExpression(createNode(n.Identifier, name, name.text), value);
+                copyEnd(arg, value);
                 args.push(arg);
             } else {
                 args.push(this.matchExpression());
@@ -868,7 +873,7 @@ class Parser {
         return args;
     }
 
-    matchFilterArguments() {
+    matchDjangoFilterArguments() {
         let tokens = this.tokens,
             args = [];
         tokens.expect(Types.COLON);

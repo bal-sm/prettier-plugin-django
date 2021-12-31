@@ -59,8 +59,8 @@ const createMultiTagParser = exports.createMultiTagParser = (tagName, subTags = 
       currentTagName = childTag.tagName;
     }
 
-    (0, setStartFromToken)(twigTag, tagStartToken);
-    (0, setEndFromToken)(twigTag, tokens.la(0));
+    setStartFromToken(twigTag, tagStartToken);
+    setEndFromToken(twigTag, tokens.la(0));
     return twigTag;
   }
 

@@ -24,9 +24,23 @@ In your editor, if the plugin is not automatically picked up and invoked (e.g., 
 
 ```json
 {
-    "printWidth": 80,
     "tabWidth": 4,
-    "plugins": ["./node_modules/prettier-plugin-twig-melody"]
+    "printWidth": 5000,
+    "twigPrintWidth": 5000,
+    "twigMultiTags": ["with,endwith"],
+    "twigAlwaysBreakObjects": false,
+    "twigSingleQuote": false,
+    "overrides": [
+        {
+            "files": ["*.jinja", "*.django", "**/views/**/*.html"],
+            "options": {
+                "parser": "melody"
+            }
+        }
+    ],
+    "plugins": [
+        "/fullpath of this package/....../node_modules/prettier-plugin-twig-melody"
+    ]
 }
 ```
 
