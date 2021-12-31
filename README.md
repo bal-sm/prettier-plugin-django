@@ -39,7 +39,7 @@ In your editor, if the plugin is not automatically picked up and invoked (e.g., 
         }
     ],
     "plugins": [
-        "/fullpath of this package/....../node_modules/prettier-plugin-twig-melody"
+        "/fullpath of this package/....../node_modules/prettier-plugin-django"
     ]
 }
 ```
