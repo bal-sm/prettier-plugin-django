@@ -28,17 +28,27 @@ const printArguments = (node, path, print, nodePath) => {
         Node.isObjectExpression(node.arguments[0])
     ) {
         // Optimization: Avoid additional indentation level
-        return group(concat(["(", printedArguments[0], ")"]));
+        // return group(concat(["(", printedArguments[0], ")"]));
+        return group(concat([":", printedArguments[0]]));
     }
 
+    // return group(
+    //     concat([
+    //         "(",
+    //         indent(
+    //             concat([softline, join(concat([",", line]), printedArguments)])
+    //         ),
+    //         softline,
+    //         ")"
+    //     ])
+    // );
     return group(
         concat([
-            "(",
+            ":",
             indent(
                 concat([softline, join(concat([",", line]), printedArguments)])
             ),
             softline,
-            ")"
         ])
     );
 };

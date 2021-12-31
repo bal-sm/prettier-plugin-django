@@ -1,3 +1,9 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 /**
  * Copyright 2017 trivago N.V.
  *
@@ -14,30 +20,28 @@
  * limitations under the License.
  */
 // https://www.w3.org/TR/html5/syntax.html#void-elements
-export const voidElements = {
-    area: true,
-    base: true,
-    br: true,
-    col: true,
-    embed: true,
-    hr: true,
-    img: true,
-    input: true,
-    keygen: true,
-    link: true,
-    meta: true,
-    param: true,
-    source: true,
-    track: true,
-    wbr: true,
+const voidElements = exports.voidElements = {
+  area: true,
+  base: true,
+  br: true,
+  col: true,
+  embed: true,
+  hr: true,
+  img: true,
+  input: true,
+  keygen: true,
+  link: true,
+  meta: true,
+  param: true,
+  source: true,
+  track: true,
+  wbr: true
 };
-
-export const rawTextElements = {
-    script: true,
-    style: true,
+const rawTextElements = exports.rawTextElements = {
+  script: true,
+  style: true
 };
-
-export const escapableRawTextElements = {
-    textarea: true,
-    title: true,
+const escapableRawTextElements = exports.escapableRawTextElements = {
+  textarea: true,
+  title: true
 };

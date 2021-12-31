@@ -1,3 +1,9 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 /**
  * Copyright 2017 trivago N.V.
  *
@@ -13,5 +19,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export var LEFT = Symbol();
-export var RIGHT = Symbol();
+var LEFT = exports.LEFT = Symbol();
+var RIGHT = exports.RIGHT = Symbol();
