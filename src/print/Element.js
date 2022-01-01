@@ -54,13 +54,20 @@ const p = (node, path, print) => {
             result.push(indent(concat([softline, joinedChildren])), softline);
         } else {
             const childBlock = [];
-            if (childGroups.length > 1) {
-                childBlock.push(hardline);
+
+            var onlyTextChildren = node.children.findIndex(c => c.type != "PrintExpressionStatement" && c.type != "PrintTextStatement") == -1
+
+            if (childGroups.length > 0) {
+                if (!onlyTextChildren) {
+                    childBlock.push(hardline);
+                }
             }
             childBlock.push(joinedChildren);
             result.push(indent(concat(childBlock)));
-            if (childGroups.length > 1) {
-                result.push(hardline);
+            if (childGroups.length > 0) {
+                if (!onlyTextChildren) {
+                    result.push(hardline);
+                }
             }
         }
         result.push(closingTag);
