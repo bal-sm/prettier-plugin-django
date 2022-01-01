@@ -54,12 +54,12 @@ const p = (node, path, print) => {
             result.push(indent(concat([softline, joinedChildren])), softline);
         } else {
             const childBlock = [];
-            if (childGroups.length > 0) {
+            if (childGroups.length > 1) {
                 childBlock.push(hardline);
             }
             childBlock.push(joinedChildren);
             result.push(indent(concat(childBlock)));
-            if (childGroups.length > 0) {
+            if (childGroups.length > 1) {
                 result.push(hardline);
             }
         }
