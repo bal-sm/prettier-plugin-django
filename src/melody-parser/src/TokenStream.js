@@ -105,8 +105,12 @@ class TokenStream {
     }
 
     error(message, pos, advice, length = 1, metadata = {}) {
-        let errorMessage = `ERROR: ${message}\n`;
-        errorMessage += (0, _melodyCodeFrame2.default)({
+        let errorMessage = `ERROR: ${message}. `;
+        if (advice) {
+            errorMessage += advice;
+        }
+        let diagnosticMsg = errorMessage;
+        errorMessage += "\n" + (0, _melodyCodeFrame2.default)({
             rawLines: this.input.source,
             lineNumber: pos.line,
             colNumber: pos.column,
@@ -118,12 +122,14 @@ class TokenStream {
             })
         });
 
-        if (advice) {
-            errorMessage += '\n\n' + advice;
-        }
-
         const result = new Error(errorMessage);
         Object.assign(result, metadata);
+        console.error(result);
+        result.stack = {
+            msg: diagnosticMsg,
+            line: pos.line,
+            column: pos.column
+        };
         throw result;
     }
 

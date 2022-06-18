@@ -1,14 +1,14 @@
-# Plugins for prettier-plugin-twig-melody
+# Plugins for prettier-plugin-django
 
 Since the Melody parser might be extended through custom Twig syntax, it can become necessary to extend the Prettier plugin, as well. Such plugins have to fulfill certain requirements.
 
 ## Finding plugins
 
-In order for `prettier-plugin-twig-melody` to find a plugin, there are the following ways:
+In order for `prettier-plugin-django` to find a plugin, there are the following ways:
 
 ### Prettier option
 
-Use the option `prettier-plugin-twig-melody-plugins` to pass a list of directories that hold the plugins you want to have loaded.
+Use the option `prettier-plugin-django-plugins` to pass a list of directories that hold the plugins you want to have loaded.
 
 In `.prettierrc.json`:
 
@@ -16,7 +16,7 @@ In `.prettierrc.json`:
 {
     "printWidth": 80,
     "tabWidth": 4,
-    "prettier-plugin-twig-melody-plugins": [
+    "prettier-plugin-django-plugins": [
         "src/@my-namespace/plugin1",
         "src/@my-namespace/plugin2"
     ]

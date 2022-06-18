@@ -11,13 +11,13 @@ This Plugin enables Prettier to format `.twig` files, as well as `.html.twig` an
 ## Install
 
 ```bash
-yarn add --dev prettier-plugin-twig-melody
+yarn add --dev prettier-plugin-django
 ```
 
 ## Use
 
 ```bash
-prettier --write "**/*.melody.twig"
+prettier --write "**/*.django"
 ```
 
 In your editor, if the plugin is not automatically picked up and invoked (e.g., if you are using format on save, but no formatting is happening when you save), try adding the plugin explicitly in your Prettier configuration (e.g., `.prettierrc.json`) using the `plugins` key:
