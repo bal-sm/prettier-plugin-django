@@ -127,8 +127,8 @@ class TokenStream {
         console.error(result);
         result.stack = {
             msg: diagnosticMsg,
-            line: pos.line,
-            column: pos.column
+            line: Math.max(1, pos.line || 0),
+            column: Math.max(1, pos.column || 0),
         };
         throw result;
     }
