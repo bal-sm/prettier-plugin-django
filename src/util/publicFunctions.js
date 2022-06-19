@@ -459,7 +459,7 @@ const isTwigCommentEqualTo = substr => node => {
     return (
         node.constructor.name === "TwigComment" &&
         node.value.value &&
-        normalizeTwigComment(node.value.value) === "{# " + substr + " #}"
+        normalizeTwigComment(node.value.value.replace(' [special]', '')) === "{# " + substr + " #}"
     );
 };
 
