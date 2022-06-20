@@ -13,55 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-var { setStartFromToken, setEndFromToken } = require("./util");
-var { GenericTagParser } = require("./GenericTagParser");
-var Types = require("./TokenTypes");
+import { setStartFromToken, setEndFromToken } from './util';
+import { GenericTagParser } from './GenericTagParser';
+import * as Types from './TokenTypes';
 
 const tagMatchesOneOf = (tokenStream, tagNames) => {
-  for (let i = 0; i < tagNames.length; i++) {
-    if (tokenStream.test(Types.SYMBOL, tagNames[i])) {
-      return true;
+    for (let i = 0; i < tagNames.length; i++) {
+        if (tokenStream.test(Types.SYMBOL, tagNames[i])) {
+            return true;
+        }
     }
-  }
-
-  return false;
+    return false;
 };
 
-const createMultiTagParser = exports.createMultiTagParser = (tagName, subTags = []) => ({
-  name: 'genericTwigMultiTag',
+export const createMultiTagParser = (tagName, subTags = []) => ({
+    name: 'genericTwigMultiTag',
+    parse(parser, token) {
+        const tokens = parser.tokens,
+            tagStartToken = tokens.la(-1);
 
-  parse(parser, token) {
-    const tokens = parser.tokens,
-      tagStartToken = tokens.la(-1);
+        if (subTags.length === 0) {
+            subTags.push('end' + tagName);
+        }
 
-    if (subTags.length === 0) {
-      subTags.push('end' + tagName);
-    }
+        const twigTag = GenericTagParser.parse(parser, token);
+        let currentTagName = tagName;
+        const endTagName = subTags[subTags.length - 1];
 
-    const twigTag = GenericTagParser.parse(parser, token);
+        while (currentTagName !== endTagName) {
+            // Parse next section
+            twigTag.sections.push(
+                parser.parse((tokenText, token, tokens) => {
+                    const hasReachedNextTag =
+                        token.type === Types.TAG_START &&
+                        tagMatchesOneOf(tokens, subTags);
+                    return hasReachedNextTag;
+                })
+            );
+            tokens.next(); // Get past "{%"
 
-    let currentTagName = tagName;
-    const endTagName = subTags[subTags.length - 1];
+            // Parse next tag
+            const childTag = GenericTagParser.parse(parser);
+            twigTag.sections.push(childTag);
+            currentTagName = childTag.tagName;
+        }
 
-    while (currentTagName !== endTagName) {
-      // Parse next section
-      twigTag.sections.push(parser.parse((tokenText, token, tokens) => {
-        const hasReachedNextTag = token.type === Types.TAG_START && tagMatchesOneOf(tokens, subTags);
-        return hasReachedNextTag;
-      }));
-      tokens.next(); // Get past "{%"
-      // Parse next tag
+        setStartFromToken(twigTag, tagStartToken);
+        setEndFromToken(twigTag, tokens.la(0));
 
-      const childTag = GenericTagParser.parse(parser);
-
-      twigTag.sections.push(childTag);
-      currentTagName = childTag.tagName;
-    }
-
-    setStartFromToken(twigTag, tagStartToken);
-    setEndFromToken(twigTag, tokens.la(0));
-    return twigTag;
-  }
-
+        return twigTag;
+    },
 });

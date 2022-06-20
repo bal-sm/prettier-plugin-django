@@ -13,5 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var LEFT = exports.LEFT = Symbol();
-var RIGHT = exports.RIGHT = Symbol();
+export var LEFT = Symbol();
+export var RIGHT = Symbol();

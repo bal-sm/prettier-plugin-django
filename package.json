@@ -1,29 +1,29 @@
 {
-    "name": "prettier-plugin-django",
-    "version": "0.4.6",
-    "description": "Prettier Plugin for Twig/Melody, Django template",
-    "main": "src",
-    "repository": "https://github.com/junstyle/prettier-plugin-django",
-    "author": "Tom Bartel <thomas.bartel@trivago.com>",
-    "license": "Apache 2.0",
-    "files": [
-        "src"
-    ],
-    "engines": {
-        "node": ">=6"
-    },
-    "scripts": {
-        "prettier": "prettier --plugin=. --parser=melody",
-        "publish": "npm publish"
-    },
-    "dependencies": {
-        "he": "^1.1.0",
-        "lodash": "^4.12.0",
-        "melody-code-frame": "^1.7.5",
-        "melody-extension-core": "^1.7.5",
-        "melody-traverse": "^1.7.5",
-        "melody-types": "^1.7.5",
-        "prettier": "^1.8.2",
-        "resolve": "^1.12.0"
-    }
+  "name": "prettier-plugin-django",
+  "version": "0.4.6",
+  "description": "Prettier Plugin for Twig/Melody, Django template",
+  "main": "./out/index.js",
+  "repository": "https://github.com/junstyle/prettier-plugin-django",
+  "author": "Tom Bartel <thomas.bartel@trivago.com>",
+  "license": "Apache-2.0",
+  "files": [
+    "src"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "prettier": "prettier --plugin=. --parser=melody",
+    "esbuild": "esbuild ./src/index.js --bundle --minify --outfile=out/index.js --external:vscode --format=cjs --platform=node",
+    "publish": "npm publish"
+  },
+  "dependencies": {
+    "babel-template": "^6.26.0",
+    "entities": "^4.3.0",
+    "melody-code-frame": "^1.7.5",
+    "melody-idom": "^1.7.5",
+    "melody-traverse": "^1.7.5",
+    "melody-types": "^1.7.5",
+    "resolve": "^1.12.0"
+  }
 }

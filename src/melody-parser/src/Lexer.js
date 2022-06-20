@@ -1,19 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _TokenTypes = require("./TokenTypes");
-
-var TokenTypes = _interopRequireWildcard(_TokenTypes);
-
-var _CharStream = require("./CharStream");
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
 /**
  * Copyright 2017 trivago N.V.
  *
@@ -29,6 +13,9 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as TokenTypes from './TokenTypes';
+import { EOF } from './CharStream';
+
 const State = {
     TEXT: 'TEXT',
     EXPRESSION: 'EXPRESSION',
@@ -38,11 +25,13 @@ const State = {
     STRING_DOUBLE: 'STRING_DOUBLE',
     ELEMENT: 'ELEMENT',
     ATTRIBUTE_VALUE: 'ATTRIBUTE_VALUE',
-    DECLARATION: 'DECLARATION'
+    DECLARATION: 'DECLARATION',
 };
+
 const STATE = Symbol(),
     OPERATORS = Symbol(),
     STRING_START = Symbol();
+
 const CHAR_TO_TOKEN = {
     '[': TokenTypes.LBRACE,
     ']': TokenTypes.RBRACE,
@@ -58,19 +47,18 @@ const CHAR_TO_TOKEN = {
     '=': TokenTypes.ASSIGNMENT,
     //'<': TokenTypes.ELEMENT_START,
     //'>': TokenTypes.ELEMENT_END,
-    '/': TokenTypes.SLASH
+    '/': TokenTypes.SLASH,
 };
 
-class Lexer {
-    constructor(input, {
-        preserveSourceLiterally = false
-    } = {}) {
+export default class Lexer {
+    constructor(input, { preserveSourceLiterally = false } = {}) {
         this.input = input;
         this[STATE] = [State.TEXT];
         this[OPERATORS] = [];
         this[STRING_START] = null;
         this.options = {
-            preserveSourceLiterally: preserveSourceLiterally === true ? true : false
+            preserveSourceLiterally:
+                preserveSourceLiterally === true ? true : false,
         };
     }
 
@@ -78,7 +66,6 @@ class Lexer {
         if (ext.unaryOperators) {
             this.addOperators(...ext.unaryOperators.map(op => op.text));
         }
-
         if (ext.binaryOperators) {
             this.addOperators(...ext.binaryOperators.map(op => op.text));
         }
@@ -95,7 +82,7 @@ class Lexer {
 
     addOperators(...ops) {
         this[OPERATORS].push(...ops);
-        this[OPERATORS].sort((a, b) => a.length > b.length ? -1 : 1);
+        this[OPERATORS].sort((a, b) => (a.length > b.length ? -1 : 1));
     }
 
     get state() {
@@ -122,9 +109,9 @@ class Lexer {
             length: end - pos.index,
             source: input.input,
             text: input.input.substr(pos.index, end - pos.index),
-            toString: function () {
+            toString: function() {
                 return this.text;
-            }
+            },
         };
     }
 
@@ -132,82 +119,92 @@ class Lexer {
         let input = this.input,
             pos,
             c;
-
-        while ((c = input.la(0)) !== _CharStream.EOF) {
+        while ((c = input.la(0)) !== EOF) {
             pos = input.mark();
-
-            if (this.state !== State.TEXT && this.state !== State.STRING_DOUBLE && this.state !== State.STRING_SINGLE && this.state !== State.ATTRIBUTE_VALUE && isWhitespace(c)) {
+            if (
+                this.state !== State.TEXT &&
+                this.state !== State.STRING_DOUBLE &&
+                this.state !== State.STRING_SINGLE &&
+                this.state !== State.ATTRIBUTE_VALUE &&
+                isWhitespace(c)
+            ) {
                 input.next();
-
-                while ((c = input.la(0)) !== _CharStream.EOF && isWhitespace(c)) {
+                while ((c = input.la(0)) !== EOF && isWhitespace(c)) {
                     input.next();
                 }
-
                 return this.createToken(TokenTypes.WHITESPACE, pos);
             }
-
             if (c === '{' && input.la(1) === '#') {
                 input.next();
                 input.next();
-
                 if (input.la(0) === '-') {
                     input.next();
                 }
-
-                while ((c = input.la(0)) !== _CharStream.EOF) {
-                    if (c === '#' && input.la(1) === '}' || c === '-' && input.la(1) === '#' && input.la(2) === '}') {
+                while ((c = input.la(0)) !== EOF) {
+                    if (
+                        (c === '#' && input.la(1) === '}') ||
+                        (c === '-' &&
+                            input.la(1) === '#' &&
+                            input.la(2) === '}')
+                    ) {
                         if (c === '-') {
                             input.next();
                         }
-
                         input.next();
                         input.next();
                         return this.createToken(TokenTypes.COMMENT, pos);
                     }
-
                     input.next();
                 }
             }
-
             if (this.state === State.TEXT) {
                 let entityToken;
-
                 if (c === '<') {
-                    if (input.la(1) === '{' || isAlpha(input.lac(1)) || input.la(1) === '/') {
+                    if (
+                        input.la(1) === '{' ||
+                        isAlpha(input.lac(1)) ||
+                        input.la(1) === '/'
+                    ) {
                         input.next();
                         this.pushState(State.ELEMENT);
                         return this.createToken(TokenTypes.ELEMENT_START, pos);
-                    } else if (input.la(1) === '!' && input.la(2) === '-' && input.la(3) === '-') {
+                    } else if (
+                        input.la(1) === '!' &&
+                        input.la(2) === '-' &&
+                        input.la(3) === '-'
+                    ) {
                         // match HTML comment
                         input.next(); // <
-
                         input.next(); // !
-
                         input.next(); // -
-
                         input.next(); // -
-
-                        while ((c = input.la(0)) !== _CharStream.EOF) {
+                        while ((c = input.la(0)) !== EOF) {
                             if (c === '-' && input.la(1) === '-') {
                                 input.next();
                                 input.next();
-
                                 if (!(c = input.next()) === '>') {
-                                    this.error('Unexpected end for HTML comment', input.mark(), `Expected comment to end with '>' but found '${c}' instead.`);
+                                    this.error(
+                                        'Unexpected end for HTML comment',
+                                        input.mark(),
+                                        `Expected comment to end with '>' but found '${c}' instead.`
+                                    );
                                 }
-
                                 break;
                             }
-
                             input.next();
                         }
-
                         return this.createToken(TokenTypes.HTML_COMMENT, pos);
-                    } else if (input.la(1) === '!' && (isAlpha(input.lac(2)) || isWhitespace(input.la(2)))) {
+                    } else if (
+                        input.la(1) === '!' &&
+                        (isAlpha(input.lac(2)) || isWhitespace(input.la(2)))
+                    ) {
                         input.next();
                         input.next();
                         this.pushState(State.DECLARATION);
-                        return this.createToken(TokenTypes.DECLARATION_START, pos);
+                        return this.createToken(
+                            TokenTypes.DECLARATION_START,
+                            pos
+                        );
                     } else {
                         return this.matchText(pos);
                     }
@@ -219,65 +216,63 @@ class Lexer {
                     return this.matchText(pos);
                 }
             } else if (this.state === State.EXPRESSION) {
-                if (c === '}' && input.la(1) === '}' || c === '-' && input.la(1) === '}' && input.la(2) === '}') {
+                if (
+                    (c === '}' && input.la(1) === '}') ||
+                    (c === '-' && input.la(1) === '}' && input.la(2) === '}')
+                ) {
                     if (c === '-') {
                         input.next();
                     }
-
                     input.next();
                     input.next();
                     this.popState();
                     return this.createToken(TokenTypes.EXPRESSION_END, pos);
                 }
-
                 return this.matchExpression(pos);
             } else if (this.state === State.TAG) {
-                if (c === '%' && input.la(1) === '}' || c === '-' && input.la(1) === '%' && input.la(2) === '}') {
+                if (
+                    (c === '%' && input.la(1) === '}') ||
+                    (c === '-' && input.la(1) === '%' && input.la(2) === '}')
+                ) {
                     if (c === '-') {
                         input.next();
                     }
-
                     input.next();
                     input.next();
                     this.popState();
                     return this.createToken(TokenTypes.TAG_END, pos);
                 }
-
                 return this.matchExpression(pos);
-            } else if (this.state === State.STRING_SINGLE || this.state === State.STRING_DOUBLE) {
+            } else if (
+                this.state === State.STRING_SINGLE ||
+                this.state === State.STRING_DOUBLE
+            ) {
                 return this.matchString(pos, true);
             } else if (this.state === State.INTERPOLATION) {
                 if (c === '}') {
                     input.next();
                     this.popState(); // pop interpolation
-
                     return this.createToken(TokenTypes.INTERPOLATION_END, pos);
                 }
-
                 return this.matchExpression(pos);
             } else if (this.state === State.ELEMENT) {
                 switch (c) {
                     case '/':
                         input.next();
                         return this.createToken(TokenTypes.SLASH, pos);
-
                     case '{':
                         return this.matchExpressionToken(pos);
-
                     case '>':
                         input.next();
                         this.popState();
                         return this.createToken(TokenTypes.ELEMENT_END, pos);
-
                     case '"':
                         input.next();
                         this.pushState(State.ATTRIBUTE_VALUE);
                         return this.createToken(TokenTypes.STRING_START, pos);
-
                     case '=':
                         input.next();
                         return this.createToken(TokenTypes.ASSIGNMENT, pos);
-
                     default:
                         return this.matchSymbol(pos);
                 }
@@ -295,15 +290,12 @@ class Lexer {
                         input.next();
                         this.popState();
                         return this.createToken(TokenTypes.ELEMENT_END, pos);
-
                     case '"':
                         input.next();
                         this.pushState(State.STRING_DOUBLE);
                         return this.createToken(TokenTypes.STRING_START, pos);
-
                     case '{':
                         return this.matchExpressionToken(pos);
-
                     default:
                         return this.matchSymbol(pos);
                 }
@@ -311,46 +303,35 @@ class Lexer {
                 return this.error(`Invalid state ${this.state}`, pos);
             }
         }
-
         return TokenTypes.EOF_TOKEN;
     }
 
     matchExpressionToken(pos) {
         const input = this.input;
-
         switch (input.la(1)) {
             case '{':
                 input.next();
                 input.next();
                 this.pushState(State.EXPRESSION);
-
                 if (input.la(0) === '-') {
                     input.next();
                 }
-
                 return this.createToken(TokenTypes.EXPRESSION_START, pos);
-
             case '%':
                 input.next();
                 input.next();
                 this.pushState(State.TAG);
-
                 if (input.la(0) === '-') {
                     input.next();
                 }
-
                 return this.createToken(TokenTypes.TAG_START, pos);
-
             case '#':
                 input.next();
                 input.next();
-
                 if (input.la(0) === '-') {
                     input.next();
                 }
-
                 return this.matchComment(pos);
-
             default:
                 return this.matchText(pos);
         }
@@ -359,70 +340,70 @@ class Lexer {
     matchExpression(pos) {
         let input = this.input,
             c = input.la(0);
-
         switch (c) {
             case "'":
                 this.pushState(State.STRING_SINGLE);
                 input.next();
                 return this.createToken(TokenTypes.STRING_START, pos);
-
             case '"':
                 this.pushState(State.STRING_DOUBLE);
                 input.next();
                 return this.createToken(TokenTypes.STRING_START, pos);
-
-            default:
-                {
-                    if (isDigit(input.lac(0))) {
-                        input.next();
-                        return this.matchNumber(pos);
-                    }
-
-                    if (c === 't' && input.match('true') || c === 'T' && input.match('TRUE')) {
-                        return this.createToken(TokenTypes.TRUE, pos);
-                    }
-
-                    if (c === 'f' && input.match('false') || c === 'F' && input.match('FALSE')) {
-                        return this.createToken(TokenTypes.FALSE, pos);
-                    }
-
-                    if (c === 'n' && (input.match('null') || input.match('none')) || c === 'N' && (input.match('NULL') || input.match('NONE'))) {
-                        return this.createToken(TokenTypes.NULL, pos);
-                    }
-
-                    const {
-                        longestMatchingOperator,
-                        longestMatchEndPos
-                    } = this.findLongestMatchingOperator();
-                    const cc = input.lac(0);
-
-                    if (cc === 95
-                        /* _ */
-                        || isAlpha(cc) || isDigit(cc)) {
-                        // okay... this could be either a symbol or an operator
-                        input.next();
-                        const sym = this.matchSymbol(pos);
-
-                        if (sym.text.length <= longestMatchingOperator.length) {
-                            // the operator was longer so let's use that
-                            input.rewind(longestMatchEndPos);
-                            return this.createToken(TokenTypes.OPERATOR, pos);
-                        } // found a symbol
-
-
-                        return sym;
-                    } else if (longestMatchingOperator) {
+            default: {
+                if (isDigit(input.lac(0))) {
+                    input.next();
+                    return this.matchNumber(pos);
+                }
+                if (
+                    (c === 't' && input.match('true')) ||
+                    (c === 'T' && input.match('TRUE'))
+                ) {
+                    return this.createToken(TokenTypes.TRUE, pos);
+                }
+                if (
+                    (c === 'f' && input.match('false')) ||
+                    (c === 'F' && input.match('FALSE'))
+                ) {
+                    return this.createToken(TokenTypes.FALSE, pos);
+                }
+                if (
+                    (c === 'n' &&
+                        (input.match('null') || input.match('none'))) ||
+                    (c === 'N' && (input.match('NULL') || input.match('NONE')))
+                ) {
+                    return this.createToken(TokenTypes.NULL, pos);
+                }
+                const {
+                    longestMatchingOperator,
+                    longestMatchEndPos,
+                } = this.findLongestMatchingOperator();
+                const cc = input.lac(0);
+                if (cc === 95 /* _ */ || isAlpha(cc) || isDigit(cc)) {
+                    // okay... this could be either a symbol or an operator
+                    input.next();
+                    const sym = this.matchSymbol(pos);
+                    if (sym.text.length <= longestMatchingOperator.length) {
+                        // the operator was longer so let's use that
                         input.rewind(longestMatchEndPos);
                         return this.createToken(TokenTypes.OPERATOR, pos);
-                    } else if (CHAR_TO_TOKEN.hasOwnProperty(c)) {
-                        input.next();
-                        return this.createToken(CHAR_TO_TOKEN[c], pos);
-                    } else if (c === '\xa0') {
-                        return this.error('Unsupported token: Non-breaking space', pos);
-                    } else {
-                        return this.error(`Unknown token ${c}`, pos);
                     }
+                    // found a symbol
+                    return sym;
+                } else if (longestMatchingOperator) {
+                    input.rewind(longestMatchEndPos);
+                    return this.createToken(TokenTypes.OPERATOR, pos);
+                } else if (CHAR_TO_TOKEN.hasOwnProperty(c)) {
+                    input.next();
+                    return this.createToken(CHAR_TO_TOKEN[c], pos);
+                } else if (c === '\xa0') {
+                    return this.error(
+                        'Unsupported token: Non-breaking space',
+                        pos
+                    );
+                } else {
+                    return this.error(`Unknown token ${c}`, pos);
                 }
+            }
         }
     }
 
@@ -431,14 +412,13 @@ class Lexer {
             start = input.mark();
         let longestMatchingOperator = '',
             longestMatchEndPos = null;
-
         for (let i = 0, ops = this[OPERATORS], len = ops.length; i < len; i++) {
             const op = ops[i];
-
             if (op.length > longestMatchingOperator.length && input.match(op)) {
-                const cc = input.lac(0); // prevent mixing up operators with symbols (e.g. matching
-                // 'not in' in 'not invalid').
+                const cc = input.lac(0);
 
+                // prevent mixing up operators with symbols (e.g. matching
+                // 'not in' in 'not invalid').
                 if (op.indexOf(' ') === -1 || !(isAlpha(cc) || isDigit(cc))) {
                     longestMatchingOperator = op;
                     longestMatchEndPos = input.mark();
@@ -447,12 +427,8 @@ class Lexer {
                 input.rewind(start);
             }
         }
-
         input.rewind(start);
-        return {
-            longestMatchingOperator,
-            longestMatchEndPos
-        };
+        return { longestMatchingOperator, longestMatchEndPos };
     }
 
     error(message, pos, advice = '') {
@@ -465,21 +441,20 @@ class Lexer {
     matchEntity(pos) {
         const input = this.input;
         input.next(); // &
-
         if (input.la(0) === '#') {
             input.next(); // #
-
             if (input.la(0) === 'x') {
                 // hexadecimal numeric character reference
                 input.next(); // x
-
                 let c = input.la(0);
-
-                while ('a' <= c && c <= 'f' || 'A' <= c && c <= 'F' || isDigit(input.lac(0))) {
+                while (
+                    ('a' <= c && c <= 'f') ||
+                    ('A' <= c && c <= 'F') ||
+                    isDigit(input.lac(0))
+                ) {
                     input.next();
                     c = input.la(0);
                 }
-
                 if (input.la(0) === ';') {
                     input.next();
                 } else {
@@ -491,9 +466,8 @@ class Lexer {
                 // consume decimal numbers
                 do {
                     input.next();
-                } while (isDigit(input.lac(0))); // check for final ";"
-
-
+                } while (isDigit(input.lac(0)));
+                // check for final ";"
                 if (input.la(0) === ';') {
                     input.next();
                 } else {
@@ -509,7 +483,6 @@ class Lexer {
             while (isAlpha(input.lac(0))) {
                 input.next();
             }
-
             if (input.la(0) === ';') {
                 input.next();
             } else {
@@ -517,7 +490,6 @@ class Lexer {
                 return null;
             }
         }
-
         return this.createToken(TokenTypes.ENTITY, pos);
     }
 
@@ -525,39 +497,49 @@ class Lexer {
         let input = this.input,
             inElement = this.state === State.ELEMENT,
             c;
-
-        while ((c = input.lac(0)) && (c === 95 || isAlpha(c) || isDigit(c) || inElement && (c === 45 || c === 58))) {
+        while (
+            (c = input.lac(0)) &&
+            (c === 95 ||
+                isAlpha(c) ||
+                isDigit(c) ||
+                (inElement && (c === 45 || c === 58)))
+        ) {
             input.next();
         }
-
         var end = input.mark();
-
         if (pos.index === end.index) {
-            return this.error('Expected an Identifier', pos, inElement ? `Expected a valid attribute name, but instead found "${input.la(0)}", which is not part of a valid attribute name.` : `Expected letter, digit or underscore but found ${input.la(0)} instead.`);
+            return this.error(
+                'Expected an Identifier',
+                pos,
+                inElement
+                    ? `Expected a valid attribute name, but instead found "${input.la(
+                          0
+                      )}", which is not part of a valid attribute name.`
+                    : `Expected letter, digit or underscore but found ${input.la(
+                          0
+                      )} instead.`
+            );
         }
-
         return this.createToken(TokenTypes.SYMBOL, pos);
     }
 
     matchString(pos, allowInterpolation = true) {
         const input = this.input,
             start = this.state === State.STRING_SINGLE ? "'" : '"';
-        let c; // string starts with an interpolation
-
+        let c;
+        // string starts with an interpolation
         if (allowInterpolation && input.la(0) === '#' && input.la(1) === '{') {
             this.pushState(State.INTERPOLATION);
             input.next();
             input.next();
             return this.createToken(TokenTypes.INTERPOLATION_START, pos);
         }
-
         if (input.la(0) === start) {
             input.next();
             this.popState();
             return this.createToken(TokenTypes.STRING_END, pos);
         }
-
-        while ((c = input.la(0)) !== start && c !== _CharStream.EOF) {
+        while ((c = input.la(0)) !== start && c !== EOF) {
             if (c === '\\' && input.la(1) === start) {
                 // escape sequence for string start
                 input.next();
@@ -570,13 +552,14 @@ class Lexer {
                 input.next();
             }
         }
-
-        var result = this.createToken(TokenTypes.STRING, pos); // Replace double backslash before escaped quotes
-
+        var result = this.createToken(TokenTypes.STRING, pos);
+        // Replace double backslash before escaped quotes
         if (!this.options.preserveSourceLiterally) {
-            result.text = result.text.replace(new RegExp('(?:\\\\)(' + start + ')', 'g'), '$1');
+            result.text = result.text.replace(
+                new RegExp('(?:\\\\)(' + start + ')', 'g'),
+                '$1'
+            );
         }
-
         return result;
     }
 
@@ -584,12 +567,10 @@ class Lexer {
         let input = this.input,
             start = this.state === State.STRING_SINGLE ? "'" : '"',
             c;
-
         if (input.la(0) === '{') {
             return this.matchExpressionToken(pos);
         }
-
-        while ((c = input.la(0)) !== start && c !== _CharStream.EOF) {
+        while ((c = input.la(0)) !== start && c !== EOF) {
             if (c === '\\' && input.la(1) === start) {
                 input.next();
                 input.next();
@@ -602,102 +583,86 @@ class Lexer {
                 input.next();
             }
         }
-
-        var result = this.createToken(TokenTypes.STRING, pos); // Replace double backslash before escaped quotes
-
+        var result = this.createToken(TokenTypes.STRING, pos);
+        // Replace double backslash before escaped quotes
         if (!this.options.preserveSourceLiterally) {
-            result.text = result.text.replace(new RegExp('(?:\\\\)(' + start + ')', 'g'), '$1');
+            result.text = result.text.replace(
+                new RegExp('(?:\\\\)(' + start + ')', 'g'),
+                '$1'
+            );
         }
-
         return result;
     }
 
     matchNumber(pos) {
         let input = this.input,
             c;
-
-        while ((c = input.lac(0)) !== _CharStream.EOF) {
+        while ((c = input.lac(0)) !== EOF) {
             if (!isDigit(c)) {
                 break;
             }
-
             input.next();
         }
-
         if (input.la(0) === '.' && isDigit(input.lac(1))) {
             input.next();
-
-            while ((c = input.lac(0)) !== _CharStream.EOF) {
+            while ((c = input.lac(0)) !== EOF) {
                 if (!isDigit(c)) {
                     break;
                 }
-
                 input.next();
             }
         }
-
         return this.createToken(TokenTypes.NUMBER, pos);
     }
 
     matchText(pos) {
         let input = this.input,
             c;
-
-        while ((c = input.la(0)) && c !== _CharStream.EOF) {
+        while ((c = input.la(0)) && c !== EOF) {
             if (c === '{') {
                 const c2 = input.la(1);
-
                 if (c2 === '{' || c2 === '#' || c2 === '%') {
                     break;
                 }
             } else if (c === '<') {
                 const nextChar = input.la(1);
-
-                if (nextChar === '/' || // closing tag
+                if (
+                    nextChar === '/' || // closing tag
                     nextChar === '!' || // HTML comment
                     isAlpha(input.lac(1)) // opening tag
                 ) {
                     break;
                 } else if (input.la(1) === '{') {
                     const c2 = input.la(1);
-
                     if (c2 === '{' || c2 === '#' || c2 === '%') {
                         break;
                     }
                 }
             }
-
             input.next();
         }
-
         return this.createToken(TokenTypes.TEXT, pos);
     }
 
     matchComment(pos) {
         let input = this.input,
             c;
-
-        while ((c = input.next()) !== _CharStream.EOF) {
+        while ((c = input.next()) !== EOF) {
             if (c === '#' && input.la(0) === '}') {
                 input.next(); // consume '}'
-
                 break;
             }
         }
-
         return this.createToken(TokenTypes.COMMENT, pos);
     }
-
 }
-
-module.exports = Lexer;
 
 function isWhitespace(c) {
     return c === '\n' || c === ' ' || c === '\t';
 }
 
 function isAlpha(c) {
-    return 65 <= c && c <= 90 || 97 <= c && c <= 122;
+    return (65 <= c && c <= 90) || (97 <= c && c <= 122);
 }
 
 function isDigit(c) {

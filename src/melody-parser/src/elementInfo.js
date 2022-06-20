@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 // https://www.w3.org/TR/html5/syntax.html#void-elements
-const voidElements = exports.voidElements = {
-  area: true,
-  base: true,
-  br: true,
-  col: true,
-  embed: true,
-  hr: true,
-  img: true,
-  input: true,
-  keygen: true,
-  link: true,
-  meta: true,
-  param: true,
-  source: true,
-  track: true,
-  wbr: true
+export const voidElements = {
+    area: true,
+    base: true,
+    br: true,
+    col: true,
+    embed: true,
+    hr: true,
+    img: true,
+    input: true,
+    keygen: true,
+    link: true,
+    meta: true,
+    param: true,
+    source: true,
+    track: true,
+    wbr: true,
 };
-const rawTextElements = exports.rawTextElements = {
-  script: true,
-  style: true
+
+export const rawTextElements = {
+    script: true,
+    style: true,
 };
-const escapableRawTextElements = exports.escapableRawTextElements = {
-  textarea: true,
-  title: true
+
+export const escapableRawTextElements = {
+    textarea: true,
+    title: true,
 };

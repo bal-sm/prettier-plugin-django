@@ -1,9 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 /**
  * Copyright 2017 trivago N.V.
  *
@@ -19,61 +13,62 @@ Object.defineProperty(exports, "__esModule", {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const EXPRESSION_START = exports.EXPRESSION_START = 'expressionStart';
-const EXPRESSION_END = exports.EXPRESSION_END = 'expressionEnd';
-const TAG_START = exports.TAG_START = 'tagStart';
-const TAG_END = exports.TAG_END = 'tagEnd';
-const INTERPOLATION_START = exports.INTERPOLATION_START = 'interpolationStart';
-const INTERPOLATION_END = exports.INTERPOLATION_END = 'interpolationEnd';
-const STRING_START = exports.STRING_START = 'stringStart';
-const STRING_END = exports.STRING_END = 'stringEnd';
-const DECLARATION_START = exports.DECLARATION_START = 'declarationStart';
-const COMMENT = exports.COMMENT = 'comment';
-const WHITESPACE = exports.WHITESPACE = 'whitespace';
-const HTML_COMMENT = exports.HTML_COMMENT = 'htmlComment';
-const TEXT = exports.TEXT = 'text';
-const ENTITY = exports.ENTITY = 'entity';
-const SYMBOL = exports.SYMBOL = 'symbol';
-const STRING = exports.STRING = 'string';
-const OPERATOR = exports.OPERATOR = 'operator';
-const TRUE = exports.TRUE = 'true';
-const FALSE = exports.FALSE = 'false';
-const NULL = exports.NULL = 'null';
-const LBRACE = exports.LBRACE = '[';
-const RBRACE = exports.RBRACE = ']';
-const LPAREN = exports.LPAREN = '(';
-const RPAREN = exports.RPAREN = ')';
-const LBRACKET = exports.LBRACKET = '{';
-const RBRACKET = exports.RBRACKET = '}';
-const COLON = exports.COLON = ':';
-const COMMA = exports.COMMA = ',';
-const DOT = exports.DOT = '.';
-const PIPE = exports.PIPE = '|';
-const QUESTION_MARK = exports.QUESTION_MARK = '?';
-const ASSIGNMENT = exports.ASSIGNMENT = '=';
-const ELEMENT_START = exports.ELEMENT_START = '<';
-const SLASH = exports.SLASH = '/';
-const ELEMENT_END = exports.ELEMENT_END = '>';
-const NUMBER = exports.NUMBER = 'number';
-const EOF = exports.EOF = 'EOF';
-const ERROR = exports.ERROR = 'ERROR';
-const EOF_TOKEN = exports.EOF_TOKEN = {
-  type: EOF,
-  pos: {
-    index: -1,
-    line: -1,
-    pos: -1
-  },
-  end: -1,
-  length: 0,
-  source: null,
-  text: ''
+export const EXPRESSION_START = 'expressionStart';
+export const EXPRESSION_END = 'expressionEnd';
+export const TAG_START = 'tagStart';
+export const TAG_END = 'tagEnd';
+export const INTERPOLATION_START = 'interpolationStart';
+export const INTERPOLATION_END = 'interpolationEnd';
+export const STRING_START = 'stringStart';
+export const STRING_END = 'stringEnd';
+export const DECLARATION_START = 'declarationStart';
+export const COMMENT = 'comment';
+export const WHITESPACE = 'whitespace';
+export const HTML_COMMENT = 'htmlComment';
+export const TEXT = 'text';
+export const ENTITY = 'entity';
+export const SYMBOL = 'symbol';
+export const STRING = 'string';
+export const OPERATOR = 'operator';
+export const TRUE = 'true';
+export const FALSE = 'false';
+export const NULL = 'null';
+export const LBRACE = '[';
+export const RBRACE = ']';
+export const LPAREN = '(';
+export const RPAREN = ')';
+export const LBRACKET = '{';
+export const RBRACKET = '}';
+export const COLON = ':';
+export const COMMA = ',';
+export const DOT = '.';
+export const PIPE = '|';
+export const QUESTION_MARK = '?';
+export const ASSIGNMENT = '=';
+export const ELEMENT_START = '<';
+export const SLASH = '/';
+export const ELEMENT_END = '>';
+export const NUMBER = 'number';
+export const EOF = 'EOF';
+export const ERROR = 'ERROR';
+export const EOF_TOKEN = {
+    type: EOF,
+    pos: {
+        index: -1,
+        line: -1,
+        pos: -1,
+    },
+    end: -1,
+    length: 0,
+    source: null,
+    text: '',
 };
-const ERROR_TABLE = exports.ERROR_TABLE = {
-  [EXPRESSION_END]: 'expression end "}}"',
-  [EXPRESSION_START]: 'expression start "{{"',
-  [TAG_START]: 'tag start "{%"',
-  [TAG_END]: 'tag end "%}"',
-  [INTERPOLATION_START]: 'interpolation start "#{"',
-  [INTERPOLATION_END]: 'interpolation end "}"'
+
+export const ERROR_TABLE = {
+    [EXPRESSION_END]: 'expression end "}}"',
+    [EXPRESSION_START]: 'expression start "{{"',
+    [TAG_START]: 'tag start "{%"',
+    [TAG_END]: 'tag end "%}"',
+    [INTERPOLATION_START]: 'interpolation start "#{"',
+    [INTERPOLATION_END]: 'interpolation end "}"',
 };

@@ -1,25 +1,17 @@
-const prettier = require("prettier");
-const { group, concat, line, hardline, indent, join } = prettier.doc.builders;
-const { EXPRESSION_NEEDED, wrapExpressionIfNeeded } = require("../util");
+import { group, concat, line, hardline, indent, join } from './../util/prettier-doc-builders.js'
+import { EXPRESSION_NEEDED, wrapExpressionIfNeeded } from '../util'
 
-const p = (node, path, print, options) => {
-    if (node.properties.length === 0) {
-        return "{}";
-    }
-    node[EXPRESSION_NEEDED] = false;
-    const mappedElements = path.map(print, "properties");
-    const separator = options.twigAlwaysBreakObjects ? hardline : line;
-    const indentedContent = concat([
-        line,
-        join(concat([",", separator]), mappedElements)
-    ]);
+export const printObjectExpression = (node, path, print, options) => {
+  if (node.properties.length === 0) {
+    return '{}'
+  }
+  node[EXPRESSION_NEEDED] = false
+  const mappedElements = path.map(print, 'properties')
+  const separator = options.twigAlwaysBreakObjects ? hardline : line
+  const indentedContent = concat([line, join(concat([',', separator]), mappedElements)])
 
-    const parts = ["{", indent(indentedContent), separator, "}"];
-    wrapExpressionIfNeeded(path, parts, node);
+  const parts = ['{', indent(indentedContent), separator, '}']
+  wrapExpressionIfNeeded(path, parts, node)
 
-    return group(concat(parts));
-};
-
-module.exports = {
-    printObjectExpression: p
-};
+  return group(concat(parts))
+}
