@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-django",
-  "version": "0.4.6",
+  "version": "0.5.1",
   "description": "Prettier Plugin for Twig/Melody, Django template",
   "main": "./out/index.js",
   "repository": "https://github.com/junstyle/prettier-plugin-django",
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "prettier": "prettier --plugin=. --parser=melody",
-    "esbuild": "esbuild ./src/index.js --bundle --minify --outfile=out/index.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "esbuild ./src/index.js --bundle --minify --sourcemap --outfile=out/index.js --external:vscode --format=cjs --platform=node",
     "publish": "npm publish"
   },
   "dependencies": {
