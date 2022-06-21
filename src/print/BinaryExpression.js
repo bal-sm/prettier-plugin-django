@@ -1,7 +1,7 @@
 import { group, concat, line, softline, indent } from './../util/prettier-doc-builders'
 import { Node } from 'melody-types'
 import { EXPRESSION_NEEDED, STRING_NEEDS_QUOTES, INSIDE_OF_STRING, GROUP_TOP_LEVEL_LOGICAL, IS_ROOT_LOGICAL_EXPRESSION, firstValueInAncestorChain, findParentNode, wrapExpressionIfNeeded } from '../util'
-import { extension as coreExtension } from '../melody-extension-core/lib/index.esm'
+import { extension as coreExtension } from './../melody-extension-core/src'
 const ALREADY_INDENTED = Symbol('ALREADY_INDENTED')
 const OPERATOR_PRECEDENCE = Symbol('OPERATOR_PRECEDENCE')
 const NO_WHITESPACE_AROUND = ['..']

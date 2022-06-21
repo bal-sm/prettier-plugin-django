@@ -1,5 +1,5 @@
 import { CharStream, Lexer, TokenStream, Parser } from './melody-parser/src'
-import { extension as coreExtension } from './melody-extension-core/lib/index.esm'
+import { extension as coreExtension } from './melody-extension-core/src'
 import { getAdditionalMelodyExtensions, getPluginPathsFromOptions } from './util'
 
 const ORIGINAL_SOURCE = Symbol('ORIGINAL_SOURCE')

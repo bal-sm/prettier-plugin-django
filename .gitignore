@@ -12,3 +12,4 @@ test_files
 tests/prettier_*
 yarn.lock
 test.js
+yarn.lock

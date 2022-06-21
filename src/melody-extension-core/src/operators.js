@@ -341,7 +341,7 @@ function createUnaryOperator(operator, typeName, precedence) {
   visitor(UnarySubclass, 'argument')
 
   unaryOperators.push({
-    text /* : operator */,
+    text: operator,
     precedence,
     createNode(token, expr) {
       const op = new UnarySubclass(expr)

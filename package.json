@@ -7,18 +7,19 @@
   "author": "Tom Bartel <thomas.bartel@trivago.com>",
   "license": "Apache-2.0",
   "files": [
-    "src"
+    "src",
+    "out"
   ],
   "engines": {
     "node": ">=6"
   },
   "scripts": {
     "prettier": "prettier --plugin=. --parser=melody",
-    "esbuild": "esbuild ./src/index.js --bundle --minify --sourcemap --outfile=out/index.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "esbuild ./src/index.js --bundle --minify --sourcemap --keep-names --outfile=out/index.js --format=cjs --platform=node",
     "publish": "npm publish"
   },
   "dependencies": {
-    "babel-template": "^6.26.0",
+    "babel-template": "^6.8.0",
     "entities": "^4.3.0",
     "melody-code-frame": "^1.7.5",
     "melody-idom": "^1.7.5",
