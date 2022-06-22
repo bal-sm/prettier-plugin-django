@@ -6,8 +6,7 @@
   "author": "Tom Bartel <thomas.bartel@trivago.com>",
   "license": "Apache-2.0",
   "files": [
-    "src",
-    "out"
+    "out/"
   ],
   "engines": {
     "node": ">=6"
