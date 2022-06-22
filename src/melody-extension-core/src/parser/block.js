@@ -21,6 +21,7 @@ export const BlockParser = {
   name: 'block',
   parse(parser, token) {
     const tokens = parser.tokens,
+      tagStartToken = tokens.la(-2),
       nameToken = tokens.expect(Types.SYMBOL)
 
     let blockStatement, openingTagEndToken, closingTagStartToken
@@ -51,7 +52,7 @@ export const BlockParser = {
     }
 
     setStartFromToken(blockStatement, token)
-    setEndFromToken(blockStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(blockStatement, tokens.expect(Types.TAG_END, null, tagStartToken))
 
     blockStatement.trimRightBlock = openingTagEndToken && hasTagEndTokenTrimRight(openingTagEndToken)
     blockStatement.trimLeftEndblock = !!(closingTagStartToken && hasTagStartTokenTrimLeft(closingTagStartToken))

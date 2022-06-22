@@ -21,6 +21,7 @@ export const FilterParser = {
   name: 'filter',
   parse(parser, token) {
     const tokens = parser.tokens,
+      tagStartToken = tokens.la(-2),
       ref = createNode(Identifier, token, 'filter'),
       filterExpression = parser.matchFilterExpression(ref)
     tokens.expect(Types.TAG_END)
@@ -38,7 +39,7 @@ export const FilterParser = {
 
     const filterBlockStatement = new FilterBlockStatement(filterExpression, body)
     setStartFromToken(filterBlockStatement, token)
-    setEndFromToken(filterBlockStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(filterBlockStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
 
     filterBlockStatement.trimRightFilter = hasTagEndTokenTrimRight(openingTagEndToken)
     filterBlockStatement.trimLeftEndfilter = closingTagStartToken && hasTagStartTokenTrimLeft(closingTagStartToken)

@@ -20,6 +20,7 @@ export const AutoescapeParser = {
   name: 'autoescape',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
 
     let escapeType = null,
       stringStartToken,
@@ -59,7 +60,7 @@ I expected the current string to end with a ${stringStartToken.text} but instead
     autoescape.expressions = parser.parse((_, token, tokens) => {
       if (token.type === Types.TAG_START && tokens.nextIf(Types.SYMBOL, 'endautoescape')) {
         closingTagStartToken = token
-        tagEndToken = tokens.expect(Types.TAG_END)
+        tagEndToken = tokens.expect(Types.TAG_END, '', tagStartToken)
         return true
       }
       return false

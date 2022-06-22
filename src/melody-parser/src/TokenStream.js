@@ -16,7 +16,7 @@
 import { EOF_TOKEN, ERROR, ERROR_TABLE, COMMENT, WHITESPACE, HTML_COMMENT, TAG_START, TAG_END, EXPRESSION_START, EXPRESSION_END, TEXT, STRING } from './TokenTypes'
 import trimEnd from 'lodash/trimEnd'
 import trimStart from 'lodash/trimStart'
-import codeFrame from 'melody-code-frame'
+// import codeFrame from 'melody-code-frame'
 
 const TOKENS = Symbol(),
   LENGTH = Symbol()
@@ -74,7 +74,7 @@ export default class TokenStream {
     return false
   }
 
-  expect(types, text) {
+  expect(types, text = null, startToken = null) {
     const token = this.la(0)
 
     if (!Array.isArray(types)) {
@@ -86,7 +86,15 @@ export default class TokenStream {
     }
 
     var type = types[0]
-    this.error('Invalid Token', token.pos, `Expected ${ERROR_TABLE[type] || type || text} but found ${ERROR_TABLE[token.type] || token.type || token.text} instead.`, token.length)
+    var expectedStr = ERROR_TABLE[type] || type || text
+    if (expectedStr != text) {
+      expectedStr + '[' + text + ']'
+    }
+    var pos = token.pos
+    if (pos.line == -1 && startToken) {
+      pos = startToken.pos
+    }
+    this.error('Invalid Token', pos, `Expected ${expectedStr} but found ${ERROR_TABLE[token.type] || token.type || token.text} instead.`, token.length)
   }
 
   error(message, pos, advice, length = 1, metadata = {}) {
@@ -94,28 +102,27 @@ export default class TokenStream {
     if (advice) {
       errorMessage += advice
     }
-    let diagnosticMsg = errorMessage
-    errorMessage +=
-      '\n' +
-      codeFrame({
-        rawLines: this.input.source,
-        lineNumber: pos.line,
-        colNumber: pos.column,
-        length,
-        tokens: getAllTokens(this.input, {
-          ignoreWhitespace: false,
-          ignoreComments: false,
-          ignoreHtmlComments: false
-        })
-      })
+    // let diagnosticMsg =
+    //   errorMessage +
+    //   '\n' +
+    //   codeFrame({
+    //     rawLines: this.input.source,
+    //     lineNumber: pos.line,
+    //     colNumber: pos.column,
+    //     length,
+    //     tokens: getAllTokens(this.input, {
+    //       ignoreWhitespace: false,
+    //       ignoreComments: false,
+    //       ignoreHtmlComments: false
+    //     })
+    //   })
 
-    const result = new Error(errorMessage)
+    const result = new Error(errorMessage + ' \t ')
     Object.assign(result, metadata)
-    console.error(result)
-    result.stack = {
-      msg: diagnosticMsg,
-      line: Math.max(1, pos.line || 0),
-      column: Math.max(1, pos.column || 0)
+    // console.error(result, diagnosticMsg)
+    result.loc = {
+      start: { line: Math.max(1, pos.line || 0), column: Math.max(0, pos.column || 0) + 1 }, //line:1+++; column:0+++
+      end: { line: Math.max(1, pos.line || 0) + 1, column: 1 }
     }
     throw result
   }

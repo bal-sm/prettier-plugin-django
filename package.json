@@ -2,7 +2,6 @@
   "name": "prettier-plugin-django",
   "version": "0.5.1",
   "description": "Prettier Plugin for Twig/Melody, Django template",
-  "main": "./out/index.js",
   "repository": "https://github.com/junstyle/prettier-plugin-django",
   "author": "Tom Bartel <thomas.bartel@trivago.com>",
   "license": "Apache-2.0",
@@ -13,9 +12,14 @@
   "engines": {
     "node": ">=6"
   },
+  "main": "./out/index.js",
+  "jsnext:main": "./out/index.esm.js",
+  "module": "./out/index.esm.js",
   "scripts": {
     "prettier": "prettier --plugin=. --parser=melody",
+    "build": "yarn esbuild && yarn esbuild-es",
     "esbuild": "esbuild ./src/index.js --bundle --minify --sourcemap --keep-names --outfile=out/index.js --format=cjs --platform=node",
+    "esbuild-es": "esbuild ./src/index.js --bundle --minify --sourcemap --keep-names --outfile=out/index-esm.js --format=esm --platform=node",
     "publish": "npm publish"
   },
   "dependencies": {

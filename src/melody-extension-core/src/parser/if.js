@@ -20,6 +20,8 @@ export const IfParser = {
   name: 'if',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
+
     let test = parser.matchExpression(),
       alternate = null
 
@@ -55,7 +57,7 @@ export const IfParser = {
     const endifTagStartToken = tokens.la(-2)
 
     setStartFromToken(ifStatement, token)
-    setEndFromToken(ifStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(ifStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
 
     ifStatement.trimRightIf = hasTagEndTokenTrimRight(ifTagEndToken)
     ifStatement.trimLeftElse = !!(elseTagStartToken && hasTagStartTokenTrimLeft(elseTagStartToken))

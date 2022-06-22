@@ -20,9 +20,10 @@ export const DoParser = {
   name: 'do',
   parse(parser, token) {
     const tokens = parser.tokens,
+      tagStartToken = tokens.la(-2),
       doStatement = new DoStatement(parser.matchExpression())
     setStartFromToken(doStatement, token)
-    setEndFromToken(doStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(doStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
     return doStatement
   }
 }

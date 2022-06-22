@@ -22,6 +22,7 @@ export const EmbedParser = {
   name: 'embed',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
 
     const embedStatement = new EmbedStatement(parser.matchExpression())
 
@@ -54,7 +55,7 @@ export const EmbedParser = {
     )
 
     setStartFromToken(embedStatement, token)
-    setEndFromToken(embedStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(embedStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
 
     embedStatement.trimRightEmbed = hasTagEndTokenTrimRight(openingTagEndToken)
     embedStatement.trimLeftEndembed = closingTagStartToken && hasTagStartTokenTrimLeft(closingTagStartToken)

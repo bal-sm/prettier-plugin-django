@@ -20,6 +20,7 @@ export const SpacelessParser = {
   name: 'spaceless',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
 
     tokens.expect(Types.TAG_END)
     const openingTagEndToken = tokens.la(-1)
@@ -33,7 +34,9 @@ export const SpacelessParser = {
 
     const spacelessBlock = new SpacelessBlock(body)
     setStartFromToken(spacelessBlock, token)
-    setEndFromToken(spacelessBlock, tokens.expect(Types.TAG_END))
+    setEndFromToken(spacelessBlock, tokens.expect(Types.TAG_END, '', tagStartToken))
+
+    tokens.expect(Types.SYMBOL, 'endfor', tagStartToken)
 
     spacelessBlock.trimRightSpaceless = hasTagEndTokenTrimRight(openingTagEndToken)
     spacelessBlock.trimLeftEndspaceless = !!(closingTagStartToken && hasTagStartTokenTrimLeft(closingTagStartToken))

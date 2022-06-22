@@ -21,7 +21,8 @@ export const ForParser = {
   name: 'for',
   parse(parser, token) {
     const tokens = parser.tokens,
-      forStatement = new ForStatement()
+      forStatement = new ForStatement(),
+      tagStartToken = tokens.la(-2)
 
     const keyTarget = tokens.expect(Types.SYMBOL)
     if (tokens.nextIf(Types.COMMA)) {
@@ -62,7 +63,7 @@ export const ForParser = {
       })
     }
     const endforTagStartToken = tokens.la(-1)
-    tokens.expect(Types.SYMBOL, 'endfor')
+    tokens.expect(Types.SYMBOL, 'endfor', tagStartToken)
 
     setStartFromToken(forStatement, token)
     setEndFromToken(forStatement, tokens.expect(Types.TAG_END))

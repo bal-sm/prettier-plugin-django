@@ -21,6 +21,7 @@ export const MacroParser = {
   name: 'macro',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
 
     const nameToken = tokens.expect(Types.SYMBOL)
     const args = []
@@ -65,7 +66,7 @@ export const MacroParser = {
     const macroDeclarationStatement = new MacroDeclarationStatement(createNode(Identifier, nameToken, nameToken.text), args, body)
 
     setStartFromToken(macroDeclarationStatement, token)
-    setEndFromToken(macroDeclarationStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(macroDeclarationStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
 
     macroDeclarationStatement.trimRightMacro = hasTagEndTokenTrimRight(openingTagEndToken)
     macroDeclarationStatement.trimLeftEndmacro = hasTagStartTokenTrimLeft(closingTagStartToken)

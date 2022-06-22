@@ -21,6 +21,7 @@ export const MountParser = {
   name: 'mount',
   parse(parser, token) {
     const tokens = parser.tokens
+    const tagStartToken = tokens.la(-2)
 
     let name = null,
       source = null,
@@ -96,7 +97,7 @@ export const MountParser = {
     }
 
     setStartFromToken(mountStatement, token)
-    setEndFromToken(mountStatement, tokens.expect(Types.TAG_END))
+    setEndFromToken(mountStatement, tokens.expect(Types.TAG_END, '', tagStartToken))
 
     mountStatement.trimRightMount = !!(openingTagEndToken && hasTagEndTokenTrimRight(openingTagEndToken))
     mountStatement.trimLeftCatch = !!(catchTagStartToken && hasTagStartTokenTrimLeft(catchTagStartToken))
