@@ -4,7 +4,7 @@ import { concat, dedent, group, hardline, indent, softline } from './util/pretti
 
 export function embed(path, print, textToDoc, options) {
   const node = path.getValue()
-  if (node instanceof Element) {
+  if (options.twigPrintEmbedElements && node instanceof Element) {
     let tagName = node.name.toLowerCase()
     if (tagName == 'script' || tagName == 'style') {
       let parser = tagName == 'script' ? 'babel' : 'css'

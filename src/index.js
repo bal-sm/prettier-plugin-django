@@ -119,6 +119,12 @@ const options = {
     category: 'Global',
     default: false,
     description: "Output the Twig block name in the 'endblock' tag"
+  },
+  twigPrintEmbedElements: {
+    type: 'boolean',
+    category: 'Global',
+    default: true,
+    description: 'whether print embeded element, such as styles and scripts'
   }
 }
 
