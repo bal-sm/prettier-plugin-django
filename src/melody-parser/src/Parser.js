@@ -272,7 +272,7 @@ export default class Parser {
       if (voidElements[elementName.text]) {
         element.selfClosing = true
       } else {
-        element.children = this.parse(function(_, token, tokens) {
+        element.children = this.parse(function (_, token, tokens) {
           if (token.type === Types.ELEMENT_START && tokens.lat(0) === Types.SLASH) {
             const name = tokens.la(1)
             if (name.type === Types.SYMBOL && name.text === elementName.text) {

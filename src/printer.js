@@ -49,7 +49,7 @@ import { ORIGINAL_SOURCE } from './parser'
 
 const printFunctions = {}
 
-const applyPlugin = loadedPlugin => {
+const applyPlugin = (loadedPlugin) => {
   if (loadedPlugin && loadedPlugin.printers) {
     for (const printerName of Object.keys(loadedPlugin.printers)) {
       printFunctions[printerName] = loadedPlugin.printers[printerName]
@@ -57,10 +57,10 @@ const applyPlugin = loadedPlugin => {
   }
 }
 
-const applyPlugins = options => {
+const applyPlugins = (options) => {
   const pluginPaths = getPluginPathsFromOptions(options)
   const loadedPlugins = loadPlugins(pluginPaths)
-  loadedPlugins.forEach(plugin => {
+  loadedPlugins.forEach((plugin) => {
     applyPlugin(plugin)
   })
 }
@@ -72,28 +72,28 @@ const isTwigIgnoreNextComment = isTwigCommentEqualTo('prettier-ignore')
 const isTwigIgnoreStartComment = isTwigCommentEqualTo('prettier-ignore-start')
 const isTwigIgnoreEndComment = isTwigCommentEqualTo('prettier-ignore-end')
 
-const isIgnoreNextComment = s => isHtmlIgnoreNextComment(s) || isTwigIgnoreNextComment(s)
-const isIgnoreRegionStartComment = s => isHtmlIgnoreStartComment(s) || isTwigIgnoreStartComment(s)
-const isIgnoreRegionEndComment = s => isHtmlIgnoreEndComment(s) || isTwigIgnoreEndComment(s)
+const isIgnoreNextComment = (s) => isHtmlIgnoreNextComment(s) || isTwigIgnoreNextComment(s)
+const isIgnoreRegionStartComment = (s) => isHtmlIgnoreStartComment(s) || isTwigIgnoreStartComment(s)
+const isIgnoreRegionEndComment = (s) => isHtmlIgnoreEndComment(s) || isTwigIgnoreEndComment(s)
 
 let originalSource = ''
 let ignoreRegion = false
 let ignoreNext = false
 
-const checkForIgnoreStart = node => {
+const checkForIgnoreStart = (node) => {
   // Keep current "ignoreNext" value if it's true,
   // but is not applied in this step yet
   ignoreNext = (ignoreNext && !shouldApplyIgnoreNext(node)) || isIgnoreNextComment(node)
   ignoreRegion = ignoreRegion || isIgnoreRegionStartComment(node)
 }
 
-const checkForIgnoreEnd = node => {
+const checkForIgnoreEnd = (node) => {
   if (ignoreRegion && isIgnoreRegionEndComment(node)) {
     ignoreRegion = false
   }
 }
 
-const shouldApplyIgnoreNext = node => !isWhitespaceNode(node)
+const shouldApplyIgnoreNext = (node) => !isWhitespaceNode(node)
 
 const print = (path, options, print) => {
   applyPlugins(options)
@@ -134,9 +134,9 @@ const print = (path, options, print) => {
   return ''
 }
 
-const getSubstringForNode = node => originalSource.substring(node.loc.start.index, node.loc.end.index)
+const getSubstringForNode = (node) => originalSource.substring(node.loc.start.index, node.loc.end.index)
 
-const canGetSubstringForNode = node => originalSource && node.loc && node.loc.start && node.loc.end && node.loc.start.index && node.loc.end.index
+const canGetSubstringForNode = (node) => originalSource && node.loc && node.loc.start && node.loc.end && node.loc.start.index && node.loc.end.index
 /**
  * Prettier printing works with a so-called FastPath object, which is
  * passed into many of the following methods through a "path" argument.
@@ -179,7 +179,7 @@ const canGetSubstringForNode = node => originalSource && node.loc && node.loc.st
  */
 
 printFunctions['SequenceExpression'] = printSequenceExpression
-printFunctions['ConstantValue'] = node => {
+printFunctions['ConstantValue'] = (node) => {
   return node.value
 }
 printFunctions['StringLiteral'] = printStringLiteral
@@ -200,7 +200,7 @@ printFunctions['ObjectExpression'] = printObjectExpression
 printFunctions['ObjectProperty'] = printObjectProperty
 
 // Return value has to be a string
-const returnNodeValue = node => '' + node.value
+const returnNodeValue = (node) => '' + node.value
 
 printFunctions['Fragment'] = (node, path, print) => {
   return path.call(print, 'value')
@@ -247,6 +247,6 @@ printFunctions['GenericTwigTag'] = (node, path, print, options) => {
 printFunctions['GenericToken'] = printGenericToken
 
 // Fallbacks
-printFunctions['String'] = s => s
+printFunctions['String'] = (s) => s
 
 export { print }

@@ -1,7 +1,7 @@
 import { concat, group, line, hardline, softline, indent, join } from './../util/prettier-doc-builders'
 import { removeSurroundingWhitespace, isInlineElement, printChildGroups, EXPRESSION_NEEDED, STRING_NEEDS_QUOTES } from '../util'
 
-const printOpeningTag = (node, path, print) => {
+export const printOpeningTag = (node, path, print) => {
   const opener = '<' + node.name
   const printedAttributes = printSeparatedList(path, print, '', 'attributes')
   const openingTagEnd = node.selfClosing ? ' />' : '>'
@@ -36,7 +36,7 @@ export const printElement = (node, path, print) => {
     } else {
       const childBlock = []
 
-      var onlyTextChildren = node.children.findIndex(c => c.type != 'PrintExpressionStatement' && c.type != 'PrintTextStatement') == -1
+      var onlyTextChildren = node.children.findIndex((c) => c.type != 'PrintExpressionStatement' && c.type != 'PrintTextStatement') == -1
 
       if (childGroups.length > 0) {
         if (!onlyTextChildren) {

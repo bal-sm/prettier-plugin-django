@@ -1,6 +1,7 @@
 'use strict'
 
 import { print } from './printer.js'
+import { embed } from './embed.js'
 import { parse } from './parser.js'
 export * from './util/publicSymbols.js'
 export * from './util/publicFunctions.js'
@@ -66,6 +67,7 @@ const printers = {
   melody: {
     print,
     // hasPrettierIgnore,
+    embed,
     printComment,
     canAttachComment,
     massageAstNode: clean,
