@@ -24,6 +24,16 @@ export const printElement = (node, path, print) => {
   node[EXPRESSION_NEEDED] = false
   node[STRING_NEEDS_QUOTES] = false
 
+  const tagName = node.name.toLowerCase()
+  if (tagName == 'script' || tagName == 'style') {
+    let { value } = node.children?.[0].value
+    if (value) {
+      return [openingGroup, value, concat(['</', node.name, '>'])]
+    } else {
+      return [openingGroup, concat(['</', node.name, '>'])]
+    }
+  }
+
   if (!node.selfClosing) {
     node.children = removeSurroundingWhitespace(node.children)
 
