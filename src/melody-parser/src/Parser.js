@@ -20,7 +20,7 @@ import { setStartFromToken, setEndFromToken, setMarkFromToken, copyStart, copyEn
 import { GenericTagParser } from './GenericTagParser'
 import { createMultiTagParser } from './GenericMultiTagParser'
 import { voidElements } from './elementInfo'
-import { decodeHTML } from 'entities'
+// import { decodeHTML } from 'entities'
 
 // type UnaryOperator = {
 //     text: String,
@@ -162,7 +162,8 @@ export default class Parser {
           break
         }
         case Types.ENTITY: {
-          const entityStringLiteral = createNode(n.StringLiteral, token, !this.options.decodeEntities || this.options.preserveSourceLiterally ? token.text : decodeHTML(token.text))
+          // const entityStringLiteral = createNode(n.StringLiteral, token, !this.options.decodeEntities || this.options.preserveSourceLiterally ? token.text : decodeHTML(token.text))
+          const entityStringLiteral = createNode(n.StringLiteral, token, token.text)
           const entityTextStatement = createNode(n.PrintTextStatement, token, entityStringLiteral)
           p.add(entityTextStatement)
           break

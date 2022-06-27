@@ -32,52 +32,52 @@ import { SpacelessParser } from './parser/spaceless';
 import { UseParser } from './parser/use';
 import { MountParser } from './parser/mount';
 
-import forVisitor from './visitors/for';
-import testVisitor from './visitors/tests';
-import filters from './visitors/filters';
-import functions from './visitors/functions';
+// import forVisitor from './visitors/for';
+// import testVisitor from './visitors/tests';
+// import filters from './visitors/filters';
+// import functions from './visitors/functions';
 
-const filterMap = [
-    'attrs',
-    'classes',
-    'styles',
-    'batch',
-    'escape',
-    'format',
-    'merge',
-    'nl2br',
-    'number_format',
-    'raw',
-    'replace',
-    'reverse',
-    'round',
-    'striptags',
-    'title',
-    'url_encode',
-    'trim',
-].reduce((map, filterName) => {
-    map[filterName] = 'melody-runtime';
-    return map;
-}, Object.create(null));
+// const filterMap = [
+//     'attrs',
+//     'classes',
+//     'styles',
+//     'batch',
+//     'escape',
+//     'format',
+//     'merge',
+//     'nl2br',
+//     'number_format',
+//     'raw',
+//     'replace',
+//     'reverse',
+//     'round',
+//     'striptags',
+//     'title',
+//     'url_encode',
+//     'trim',
+// ].reduce((map, filterName) => {
+//     map[filterName] = 'melody-runtime';
+//     return map;
+// }, Object.create(null));
 
-Object.assign(filterMap, filters);
+// Object.assign(filterMap, filters);
 
-const functionMap = [
-    'attribute',
-    'constant',
-    'cycle',
-    'date',
-    'max',
-    'min',
-    'random',
-    'range',
-    'source',
-    'template_from_string',
-].reduce((map, functionName) => {
-    map[functionName] = 'melody-runtime';
-    return map;
-}, Object.create(null));
-Object.assign(functionMap, functions);
+// const functionMap = [
+//     'attribute',
+//     'constant',
+//     'cycle',
+//     'date',
+//     'max',
+//     'min',
+//     'random',
+//     'range',
+//     'source',
+//     'template_from_string',
+// ].reduce((map, functionName) => {
+//     map[functionName] = 'melody-runtime';
+//     return map;
+// }, Object.create(null));
+// Object.assign(functionMap, functions);
 
 export const extension = {
     tags: [
@@ -102,9 +102,9 @@ export const extension = {
     unaryOperators,
     binaryOperators,
     tests,
-    visitors: [forVisitor, testVisitor],
-    filterMap,
-    functionMap,
+    // visitors: [forVisitor, testVisitor],
+    // filterMap,
+    // functionMap,
 };
 
 export {
