@@ -2,16 +2,17 @@ import { CharStream, Lexer, TokenStream, Parser } from './melody-parser/src'
 import { extension as coreExtension } from './melody-extension-core/src'
 import { getAdditionalMelodyExtensions, getPluginPathsFromOptions } from './util'
 
-const ORIGINAL_SOURCE = Symbol('ORIGINAL_SOURCE')
+// const ORIGINAL_SOURCE = Symbol('ORIGINAL_SOURCE')
+const ORIGINAL_SOURCE = 'ORIGINAL_SOURCE'
 
 const createConfiguredLexer = (code, ...extensions) => {
   const lexer = new Lexer(new CharStream(code))
   for (const extension of extensions) {
     if (extension.unaryOperators) {
-      lexer.addOperators(...extension.unaryOperators.map(op => op.text))
+      lexer.addOperators(...extension.unaryOperators.map((op) => op.text))
     }
     if (extension.binaryOperators) {
-      lexer.addOperators(...extension.binaryOperators.map(op => op.text))
+      lexer.addOperators(...extension.binaryOperators.map((op) => op.text))
     }
   }
   return lexer
@@ -66,7 +67,7 @@ const createConfiguredParser = (code, multiTagConfig, ...extensions) => {
 const getMultiTagConfig = (tagsCsvs = []) =>
   tagsCsvs.reduce((acc, curr) => {
     const tagNames = curr.split(',')
-    acc[tagNames[0].trim()] = tagNames.slice(1).map(s => s.trim())
+    acc[tagNames[0].trim()] = tagNames.slice(1).map((s) => s.trim())
     return acc
   }, {})
 
