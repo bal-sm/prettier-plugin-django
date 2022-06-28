@@ -26,7 +26,7 @@ export const printElement = (node, path, print) => {
 
   const tagName = node.name.toLowerCase()
   if (tagName == 'script' || tagName == 'style') {
-    let { value } = node.children?.[0]?.value
+    let { value } = node.children?.[0]?.value || {}
     if (value) {
       return [openingGroup, value, concat(['</', node.name, '>'])]
     } else {
