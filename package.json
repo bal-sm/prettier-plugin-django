@@ -1,9 +1,9 @@
 {
   "name": "prettier-plugin-django",
-  "version": "0.5.1",
-  "description": "Prettier Plugin for Twig/Melody, Django template",
+  "version": "0.5.2",
+  "description": "Prettier Plugin for Django/Twig/Melody, Django template",
   "repository": "https://github.com/junstyle/prettier-plugin-django",
-  "author": "Tom Bartel <thomas.bartel@trivago.com>",
+  "author": "junstyle",
   "license": "Apache-2.0",
   "files": [
     "out/"
