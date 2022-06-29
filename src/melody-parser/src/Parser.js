@@ -273,18 +273,54 @@ export default class Parser {
       if (voidElements[elementName.text]) {
         element.selfClosing = true
       } else {
-        element.children = this.parse(function (_, token, tokens) {
-          if (token.type === Types.ELEMENT_START && tokens.lat(0) === Types.SLASH) {
-            const name = tokens.la(1)
-            if (name.type === Types.SYMBOL && name.text === elementName.text) {
-              tokens.next() // SLASH
-              tokens.next() // elementName
-              tokens.expect(Types.ELEMENT_END)
-              return true
+        if (elementName.text.toLowerCase() == 'script') {
+          let currentToken = tokens.next(),
+            startToken = currentToken
+          while (!tokens.test(Types.EOF)) {
+            if (currentToken.type === Types.ELEMENT_START && tokens.lat(0) === Types.SLASH) {
+              const name = tokens.la(1)
+              if (name.type === Types.SYMBOL && name.text === elementName.text) {
+                tokens.next() // SLASH
+                tokens.next() // elementName
+                tokens.expect(Types.ELEMENT_END)
+                break
+              }
             }
+            currentToken = tokens.next()
           }
-          return false
-        }).expressions
+          if (tokens.test(Types.EOF)) {
+            this.error({
+              title: 'Expected </script>, but not found',
+              pos: elementNameToken.pos,
+              advice: 'Script tag must have an end tag'
+            })
+          }
+          const {
+            pos: { index, line, column }
+          } = startToken
+          const end = currentToken.end - 1
+          const scriptTextToken = { pos: { index, line, column }, end: end }
+          const textStringLiteral = createNode(n.StringLiteral, scriptTextToken, tokens.input.input.input.slice(index, end))
+          const textTextStatement = createNode(n.PrintTextStatement, scriptTextToken, textStringLiteral)
+          element.children.push(textTextStatement)
+
+          setMarkFromToken(element, 'elementNameLoc', elementNameToken)
+
+          return element
+        } else {
+          element.children = this.parse(function (_, token, tokens) {
+            if (token.type === Types.ELEMENT_START && tokens.lat(0) === Types.SLASH) {
+              const name = tokens.la(1)
+              if (name.type === Types.SYMBOL && name.text === elementName.text) {
+                tokens.next() // SLASH
+                tokens.next() // elementName
+                tokens.expect(Types.ELEMENT_END)
+                return true
+              }
+            }
+            return false
+          }).expressions
+        }
       }
     }
 

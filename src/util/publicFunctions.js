@@ -4,7 +4,7 @@ import { Node } from 'melody-types'
 
 import { PRESERVE_LEADING_WHITESPACE, PRESERVE_TRAILING_WHITESPACE, NEWLINES_ONLY } from './publicSymbols.js'
 
-const INLINE_HTML_ELEMENTS = ['title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'dd', 'dfn', 'em', 'i', 'img', 'kbd', 'label', 'li', 'mark', 'q', 's', 'samp', 'strong', 'sup', 'sub', 'small', 'span', 'time', 'tt', 'var']
+const INLINE_HTML_ELEMENTS = ['title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'dd', 'dfn', 'em', 'i', 'img', 'kbd', 'label', 'mark', 'q', 's', 'u', 'samp', 'strike', 'strong', 'sup', 'sub', 'small', 'span', 'time', 'tt', 'var']
 
 /**
  * Node types around which we avoid an extra line break.
