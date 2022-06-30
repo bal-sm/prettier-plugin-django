@@ -299,14 +299,10 @@ export default class Parser {
             pos: { index, line, column }
           } = startToken
           const end = currentToken.end - 1
-          const scriptTextToken = { pos: { index, line, column }, end: end }
+          const scriptTextToken = { pos: { index, line, column }, end }
           const textStringLiteral = createNode(n.StringLiteral, scriptTextToken, tokens.input.input.input.slice(index, end))
           const textTextStatement = createNode(n.PrintTextStatement, scriptTextToken, textStringLiteral)
           element.children.push(textTextStatement)
-
-          setMarkFromToken(element, 'elementNameLoc', elementNameToken)
-
-          return element
         } else {
           element.children = this.parse(function (_, token, tokens) {
             if (token.type === Types.ELEMENT_START && tokens.lat(0) === Types.SLASH) {
