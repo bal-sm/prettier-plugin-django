@@ -1,7 +1,6 @@
-import { group, indent, line, hardline, concat } from './../util/prettier-doc-builders.js'
-import { EXPRESSION_NEEDED, printChildBlock } from '../util'
 import { Node } from 'melody-types'
-import { hasNoNewlines, PRESERVE_LEADING_WHITESPACE, PRESERVE_TRAILING_WHITESPACE } from '../util'
+import { EXPRESSION_NEEDED, hasNoNewlines, PRESERVE_LEADING_WHITESPACE, PRESERVE_TRAILING_WHITESPACE, printChildBlock } from '../util'
+import { concat, group, hardline, indent, line } from './../util/prettier-doc-builders.js'
 
 const IS_ELSEIF = Symbol('IS_ELSEIF')
 
@@ -21,7 +20,7 @@ export const printIfStatement = (node, path, print) => {
     firstChild[PRESERVE_TRAILING_WHITESPACE] = true
   }
 
-  const ifClause = group(concat([node.trimLeft ? '{%- ' : '{% ', isElseIf ? 'elseif' : 'if', indent(concat([line, path.call(print, 'test')])), ' ', node.trimRightIf ? '-%}' : '%}']))
+  const ifClause = group(concat([node.trimLeft ? '{%- ' : '{% ', isElseIf ? (node.isElif ? 'elif' : 'elseif') : 'if', indent(concat([line, path.call(print, 'test')])), ' ', node.trimRightIf ? '-%}' : '%}']))
   const ifBody = printInline ? (isEmptyIf ? '' : path.call(print, 'consequent', '0')) : printChildBlock(node, path, print, 'consequent')
   const parts = [ifClause, ifBody]
   if (hasElseBranch) {

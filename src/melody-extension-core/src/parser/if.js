@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Types, setStartFromToken, setEndFromToken, hasTagStartTokenTrimLeft, hasTagEndTokenTrimRight } from '../../../melody-parser/src/'
+import { hasTagEndTokenTrimRight, hasTagStartTokenTrimLeft, setEndFromToken, setStartFromToken, Types } from '../../../melody-parser/src/'
 import { IfStatement } from './../types'
 
 export const IfParser = {
@@ -37,7 +37,7 @@ export const IfParser = {
         elseTagStartToken = tokens.la(-2)
         tokens.expect(Types.TAG_END)
         elseTagEndToken = tokens.la(-1)
-        ;(alternate || ifStatement).alternate = parser.parse(matchAlternate).expressions
+          ; (alternate || ifStatement).alternate = parser.parse(matchAlternate).expressions
       } else if (tokens.nextIf(Types.SYMBOL, 'elseif')) {
         elseifTagStartToken = tokens.la(-2)
         test = parser.matchExpression()
@@ -47,6 +47,16 @@ export const IfParser = {
         alternate = (alternate || ifStatement).alternate = new IfStatement(test, consequent)
         alternate.trimLeft = hasTagStartTokenTrimLeft(elseifTagStartToken)
         alternate.trimRightIf = hasTagEndTokenTrimRight(elseifTagEndToken)
+      } else if (tokens.nextIf(Types.SYMBOL, 'elif')) {
+        elseifTagStartToken = tokens.la(-2)
+        test = parser.matchExpression()
+        tokens.expect(Types.TAG_END)
+        elseifTagEndToken = tokens.la(-1)
+        const consequent = parser.parse(matchConsequent).expressions
+        alternate = (alternate || ifStatement).alternate = new IfStatement(test, consequent)
+        alternate.trimLeft = hasTagStartTokenTrimLeft(elseifTagStartToken)
+        alternate.trimRightIf = hasTagEndTokenTrimRight(elseifTagEndToken)
+        alternate.isElif = true
       }
 
       if (tokens.nextIf(Types.SYMBOL, 'endif')) {
@@ -71,7 +81,7 @@ export const IfParser = {
 function matchConsequent(tokenText, token, tokens) {
   if (token.type === Types.TAG_START) {
     const next = tokens.la(0).text
-    return next === 'else' || next === 'endif' || next === 'elseif'
+    return next === 'else' || next === 'endif' || next === 'elseif' || next == 'elif'
   }
   return false
 }
