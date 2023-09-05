@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import * as n from 'melody-types'
-import * as Types from './TokenTypes'
-import { LEFT, RIGHT } from './Associativity'
-import { setStartFromToken, setEndFromToken, setMarkFromToken, copyStart, copyEnd, copyLoc, createNode } from './util'
-import { GenericTagParser } from './GenericTagParser'
+import { LEFT } from './Associativity'
 import { createMultiTagParser } from './GenericMultiTagParser'
+import { GenericTagParser } from './GenericTagParser'
+import * as Types from './TokenTypes'
 import { voidElements } from './elementInfo'
+import { copyEnd, copyLoc, copyStart, createNode, setEndFromToken, setMarkFromToken, setStartFromToken } from './util'
 // import { decodeHTML } from 'entities'
 
 // type UnaryOperator = {
@@ -348,6 +348,9 @@ export default class Parser {
             } else if ((token = tokens.nextIf(Types.EXPRESSION_START))) {
               nodes[nodes.length] = this.matchExpression()
               tokens.expect(Types.EXPRESSION_END)
+              canBeString = true
+            } else if ((token = tokens.nextIf(Types.TAG_START))) {
+              nodes[nodes.length] = this.matchTag()
               canBeString = true
             } else {
               break
