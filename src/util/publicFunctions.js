@@ -1,8 +1,8 @@
-import { EXPRESSION_NEEDED, INSIDE_OF_STRING } from './publicSymbols.js'
-import { line, indent, concat, fill, group, hardline } from './prettier-doc-builders.js'
 import { Node } from 'melody-types'
+import { concat, fill, group, hardline, indent, line } from './prettier-doc-builders.js'
+import { EXPRESSION_NEEDED, INSIDE_OF_STRING } from './publicSymbols.js'
 
-import { PRESERVE_LEADING_WHITESPACE, PRESERVE_TRAILING_WHITESPACE, NEWLINES_ONLY } from './publicSymbols.js'
+import { NEWLINES_ONLY, PRESERVE_LEADING_WHITESPACE, PRESERVE_TRAILING_WHITESPACE } from './publicSymbols.js'
 
 const INLINE_HTML_ELEMENTS = ['title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'dd', 'dfn', 'em', 'i', 'img', 'kbd', 'label', 'mark', 'q', 's', 'u', 'samp', 'strike', 'strong', 'sup', 'sub', 'small', 'span', 'time', 'tt', 'var']
 
@@ -152,6 +152,9 @@ const someParentNode = (path, predicate) => {
 const shouldExpressionsBeWrapped = (path) => {
   let result = false
   walkParents(path, (node) => {
+    if (node['tagName'] != undefined) {
+      return false
+    }
     if (node[INSIDE_OF_STRING] === true) {
       result = INSIDE_OF_STRING
       return false
@@ -456,4 +459,5 @@ const printChildGroups = (node, path, print, ...childPath) => {
   return finishedGroups
 }
 
-export { shouldExpressionsBeWrapped, wrapExpressionIfNeeded, wrapInStringInterpolation, wrapInEnvironment, findParentNode, isRootNode, isMelodyNode, someParentNode, walkParents, firstValueInAncestorChain, isContractableNodeType, isNotExpression, isMultipartExpression, registerContractableNodeType, quoteChar, isValidIdentifierName, testCurrentNode, testCurrentAndParentNodes, isWhitespaceOnly, isWhitespaceNode, isEmptySequence, hasNoNewlines, countNewlines, hasAtLeastTwoNewlines, stripHtmlCommentChars, stripTwigCommentChars, normalizeHtmlComment, normalizeTwigComment, isHtmlCommentEqualTo, isTwigCommentEqualTo, createTextGroups, removeSurroundingWhitespace, getDeepProperty, setDeepProperty, isInlineElement, printChildBlock, printChildGroups, indentWithHardline }
+export { countNewlines, createTextGroups, findParentNode, firstValueInAncestorChain, getDeepProperty, hasAtLeastTwoNewlines, hasNoNewlines, indentWithHardline, isContractableNodeType, isEmptySequence, isHtmlCommentEqualTo, isInlineElement, isMelodyNode, isMultipartExpression, isNotExpression, isRootNode, isTwigCommentEqualTo, isValidIdentifierName, isWhitespaceNode, isWhitespaceOnly, normalizeHtmlComment, normalizeTwigComment, printChildBlock, printChildGroups, quoteChar, registerContractableNodeType, removeSurroundingWhitespace, setDeepProperty, shouldExpressionsBeWrapped, someParentNode, stripHtmlCommentChars, stripTwigCommentChars, testCurrentAndParentNodes, testCurrentNode, walkParents, wrapExpressionIfNeeded, wrapInEnvironment, wrapInStringInterpolation }
+
