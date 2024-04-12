@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Node, Identifier, SequenceExpression, type, alias, visitor } from 'melody-types'
+import { Node, alias, type, visitor } from 'melody-types'
 
 export class AutoescapeBlock extends Node {
   constructor(type /* : String | boolean */, expressions /* ?: Array<Node> */) {
@@ -183,6 +183,29 @@ type(IncludeStatement, 'IncludeStatement')
 alias(IncludeStatement, 'Statement', 'Include')
 visitor(IncludeStatement, 'source', 'argument')
 
+export class UrlStatement extends Node {
+  constructor(name /* : Node */) {
+    super()
+    this.name = name
+    this.arguments = []
+    this.as = null
+  }
+}
+type(UrlStatement, 'UrlStatement')
+alias(UrlStatement, 'Statement', 'Url')
+visitor(UrlStatement, 'name', 'arguments')
+
+export class WithStatement extends Node {
+  constructor(body /* : Node */) {
+    super()
+    this.arguments = []
+    this.body = body
+  }
+}
+type(WithStatement, 'WithStatement')
+alias(WithStatement, 'Statement', 'Scope', 'RootScope')
+visitor(WithStatement, 'body')
+
 export class MacroDeclarationStatement extends Node {
   constructor(name /* : Identifier */, args /* : Array<Node> */, body /* : SequenceExpression */) {
     super()
@@ -248,4 +271,5 @@ type(UseStatement, 'UseStatement')
 alias(UseStatement, 'Statement', 'Include')
 visitor(UseStatement, 'source', 'aliases')
 
-export { UnaryNotExpression, UnaryNeqExpression, UnaryPosExpression, BinaryOrExpression, BinaryAndExpression, BitwiseOrExpression, BitwiseXorExpression, BitwiseAndExpression, BinaryEqualsExpression, BinaryNotEqualsExpression, BinaryLessThanExpression, BinaryGreaterThanExpression, BinaryLessThanOrEqualExpression, BinaryGreaterThanOrEqualExpression, BinaryNotInExpression, BinaryInExpression, BinaryMatchesExpression, BinaryStartsWithExpression, BinaryEndsWithExpression, BinaryRangeExpression, BinaryAddExpression, BinaryMulExpression, BinaryDivExpression, BinaryFloorDivExpression, BinaryModExpression, BinaryPowerExpression, BinaryNullCoalesceExpression, TestEvenExpression, TestOddExpression, TestDefinedExpression, TestSameAsExpression, TestNullExpression, TestDivisibleByExpression, TestConstantExpression, TestEmptyExpression, TestIterableExpression } from './operators'
+export { BinaryAddExpression, BinaryAndExpression, BinaryDivExpression, BinaryEndsWithExpression, BinaryEqualsExpression, BinaryFloorDivExpression, BinaryGreaterThanExpression, BinaryGreaterThanOrEqualExpression, BinaryInExpression, BinaryLessThanExpression, BinaryLessThanOrEqualExpression, BinaryMatchesExpression, BinaryModExpression, BinaryMulExpression, BinaryNotEqualsExpression, BinaryNotInExpression, BinaryNullCoalesceExpression, BinaryOrExpression, BinaryPowerExpression, BinaryRangeExpression, BinaryStartsWithExpression, BitwiseAndExpression, BitwiseOrExpression, BitwiseXorExpression, TestConstantExpression, TestDefinedExpression, TestDivisibleByExpression, TestEmptyExpression, TestEvenExpression, TestIterableExpression, TestNullExpression, TestOddExpression, TestSameAsExpression, UnaryNeqExpression, UnaryNotExpression, UnaryPosExpression } from './operators'
+
