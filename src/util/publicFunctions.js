@@ -152,7 +152,7 @@ const someParentNode = (path, predicate) => {
 const shouldExpressionsBeWrapped = (path) => {
   let result = false
   walkParents(path, (node) => {
-    if (node['tagName'] != undefined) {
+    if (node['tagName'] != undefined || node['tagNameLoc'] != undefined) {
       return false
     }
     if (node[INSIDE_OF_STRING] === true) {

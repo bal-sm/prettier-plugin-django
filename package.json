@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-django",
-  "version": "0.5.11",
+  "version": "0.5.12",
   "description": "Prettier Plugin for Django/Twig/Melody, Django template",
   "repository": "https://github.com/junstyle/prettier-plugin-django",
   "author": "junstyle",
@@ -20,7 +20,7 @@
     "build": "npm run esbuild && npm run esbuild-es",
     "esbuild": "esbuild ./src/index.js --bundle --minify --sourcemap --keep-names --outfile=out/index.js --format=cjs --platform=node",
     "esbuild-es": "esbuild ./src/index.js --bundle --minify --sourcemap --keep-names --outfile=out/index-esm.js --format=esm --platform=node",
-    "watch": "npm run -S build -- --sourcemap --watch"
+    "watch": "npm run -S esbuild -- --sourcemap --watch"
   },
   "dependencies": {
     "babel-template": "^6.26.0",
