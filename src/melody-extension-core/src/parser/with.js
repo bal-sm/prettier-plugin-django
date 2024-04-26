@@ -36,13 +36,20 @@ export const WithParser = {
         copyEnd(arg, value)
         args.push(arg)
       } else {
-        // args.push(parser.matchExpression())
-        const unexpectedToken = tokens.next()
-        parser.error({
-          title: 'with arguments mismatch',
-          pos: unexpectedToken.pos,
-          advice: 'eg: {% with alpha=1 beta=2 %}'
-        })
+        const value = parser.matchExpression()
+        if (tokens.nextIf(Types.SYMBOL, 'as')) {
+          const name = tokens.next()
+          const arg = new n.NamedArgumentExpression(createNode(n.Identifier, name, name.text), value)
+          copyEnd(arg, value)
+          args.push(arg)
+        } else {
+          const unexpectedToken = tokens.next()
+          parser.error({
+            title: 'with arguments mismatch',
+            pos: unexpectedToken.pos,
+            advice: 'eg: {% with alpha=1 beta=2 %}'
+          })
+        }
       }
     }
 
