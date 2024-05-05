@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-django",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "Prettier Plugin for Django/Twig/Melody, Django template",
   "repository": "https://github.com/junstyle/prettier-plugin-django",
   "author": "junstyle",

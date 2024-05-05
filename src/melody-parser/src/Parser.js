@@ -837,10 +837,11 @@ export default class Parser {
 
     while (!tokens.test(Types.PIPE) && !tokens.test(Types.EXPRESSION_END) && !tokens.test(Types.TAG_END)) {
       args.push(this.matchExpression())
+      break //django filter has only one argument
     }
 
-    tokens.expect([Types.PIPE, Types.EXPRESSION_END, Types.TAG_END])
-    tokens.index-- //must back to last token
+    // tokens.expect([Types.PIPE, Types.EXPRESSION_END, Types.TAG_END])
+    // tokens.index-- //must back to last token
 
     return args
   }
