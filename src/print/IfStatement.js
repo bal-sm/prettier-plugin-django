@@ -20,7 +20,7 @@ export const printIfStatement = (node, path, print) => {
     firstChild[PRESERVE_TRAILING_WHITESPACE] = true
   }
 
-  const ifClause = group(concat([node.trimLeft ? '{%- ' : '{% ', isElseIf ? (node.isElif ? 'elif' : 'elseif') : 'if', indent(concat([line, path.call(print, 'test')])), ' ', node.trimRightIf ? '-%}' : '%}']))
+  const ifClause = group(concat([node.trimLeft ? '{%- ' : '{% ', isElseIf ? node.elseifText : 'if', indent(concat([line, path.call(print, 'test')])), ' ', node.trimRightIf ? '-%}' : '%}']))
   const ifBody = printInline ? (isEmptyIf ? '' : path.call(print, 'consequent', '0')) : printChildBlock(node, path, print, 'consequent')
   const parts = [ifClause, ifBody]
   if (hasElseBranch) {

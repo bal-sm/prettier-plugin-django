@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Node, BinaryExpression, BinaryConcatExpression, UnaryExpression, type, alias, visitor } from 'melody-types'
-import { Types, setStartFromToken, setEndFromToken, copyStart, copyEnd, copyLoc, LEFT } from '../../melody-parser/src/'
+import { BinaryConcatExpression, BinaryExpression, Node, UnaryExpression, alias, type, visitor } from 'melody-types'
+import { LEFT, Types, copyEnd, copyLoc, copyStart, setEndFromToken, setStartFromToken } from '../../melody-parser/src/'
 
 export const unaryOperators = []
 export const binaryOperators = []
@@ -251,6 +251,9 @@ export const BinaryNullCoalesceExpression = createBinaryOperatorNode({
 export const TestEvenExpression = createTest('even', 'TestEvenExpression')
 export const TestOddExpression = createTest('odd', 'TestOddExpression')
 export const TestDefinedExpression = createTest('defined', 'TestDefinedExpression')
+export const TestTrueExpression = createTest('True', 'TestTrueExpression')
+export const TestFalseExpression = createTest('False', 'TestFalseExpression')
+export const TestNoneExpression = createTest('None', 'TestNoneExpression')
 export const TestSameAsExpression = createTest('same as', 'TestSameAsExpression')
 tests.push({
   text: 'sameas',

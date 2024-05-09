@@ -1,5 +1,5 @@
-import { concat, softline, line, group, join, indent } from './../util/prettier-doc-builders.js'
 import { findParentNode } from '../util'
+import { concat, group, indent, join, line, softline } from './../util/prettier-doc-builders.js'
 
 const textMap = {
   TestNullExpression: 'null',
@@ -9,7 +9,10 @@ const textMap = {
   TestEvenExpression: 'even',
   TestOddExpression: 'odd',
   TestIterableExpression: 'iterable',
-  TestSameAsExpression: 'same as'
+  TestSameAsExpression: 'same as',
+  TestTrueExpression: "True",
+  TestFalseExpression: "False",
+  TestNoneExpression: "None"
 }
 
 const isNegator = node => node.constructor.name === 'UnarySubclass' && node.operator === 'not'

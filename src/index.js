@@ -1,10 +1,10 @@
 'use strict'
 
-import { print } from './printer.js'
 import { embed } from './embed.js'
 import { parse } from './parser.js'
-export * from './util/publicSymbols.js'
+import { print } from './printer.js'
 export * from './util/publicFunctions.js'
+export * from './util/publicSymbols.js'
 
 const languages = [
   {
@@ -119,9 +119,16 @@ const options = {
     category: 'Global',
     default: false,
     description: "Output the Twig block name in the 'endblock' tag"
-  }
+  },
+  templateType: {
+    type: 'string',
+    category: 'Global',
+    default: 'twig',
+    description: "template type, such as django, twig"
+  },
 }
 
 // This exports defines the Prettier plugin
 // See https://github.com/prettier/prettier/blob/master/docs/plugins.md
-export { languages, printers, parsers, options }
+export { languages, options, parsers, printers }
+

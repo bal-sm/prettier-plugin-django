@@ -38,25 +38,17 @@ export const IfParser = {
         tokens.expect(Types.TAG_END)
         elseTagEndToken = tokens.la(-1)
           ; (alternate || ifStatement).alternate = parser.parse(matchAlternate).expressions
-      } else if (tokens.nextIf(Types.SYMBOL, 'elseif')) {
+      } else if (tokens.nextIf(Types.SYMBOL, 'elseif') || tokens.nextIf(Types.SYMBOL, 'elif')) {
+        const elseifText = tokens.la(-1).text
         elseifTagStartToken = tokens.la(-2)
         test = parser.matchExpression()
         tokens.expect(Types.TAG_END)
         elseifTagEndToken = tokens.la(-1)
         const consequent = parser.parse(matchConsequent).expressions
         alternate = (alternate || ifStatement).alternate = new IfStatement(test, consequent)
+        alternate.elseifText = elseifText
         alternate.trimLeft = hasTagStartTokenTrimLeft(elseifTagStartToken)
         alternate.trimRightIf = hasTagEndTokenTrimRight(elseifTagEndToken)
-      } else if (tokens.nextIf(Types.SYMBOL, 'elif')) {
-        elseifTagStartToken = tokens.la(-2)
-        test = parser.matchExpression()
-        tokens.expect(Types.TAG_END)
-        elseifTagEndToken = tokens.la(-1)
-        const consequent = parser.parse(matchConsequent).expressions
-        alternate = (alternate || ifStatement).alternate = new IfStatement(test, consequent)
-        alternate.trimLeft = hasTagStartTokenTrimLeft(elseifTagStartToken)
-        alternate.trimRightIf = hasTagEndTokenTrimRight(elseifTagEndToken)
-        alternate.isElif = true
       }
 
       if (tokens.nextIf(Types.SYMBOL, 'endif')) {

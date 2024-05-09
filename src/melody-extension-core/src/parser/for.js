@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Identifier } from 'melody-types'
-import { Types, setStartFromToken, setEndFromToken, createNode, hasTagStartTokenTrimLeft, hasTagEndTokenTrimRight } from '../../../melody-parser/src/'
+import { Types, createNode, hasTagEndTokenTrimRight, hasTagStartTokenTrimLeft, setEndFromToken, setStartFromToken } from '../../../melody-parser/src/'
 import { ForStatement } from './../types'
 
 export const ForParser = {
@@ -42,20 +42,29 @@ export const ForParser = {
       forStatement.condition = parser.matchExpression()
     }
 
+    if (tokens.nextIf(Types.SYMBOL, 'reversed')) {
+      forStatement.reversed = true
+    }
+
+    if (tokens.nextIf(Types.SYMBOL, 'sorted')) {
+      forStatement.sorted = true
+    }
+
     tokens.expect(Types.TAG_END)
 
     const openingTagEndToken = tokens.la(-1)
     let elseTagStartToken, elseTagEndToken
 
     forStatement.body = parser.parse((tokenText, token, tokens) => {
-      const result = token.type === Types.TAG_START && (tokens.test(Types.SYMBOL, 'else') || tokens.test(Types.SYMBOL, 'endfor'))
-      if (result && tokens.test(Types.SYMBOL, 'else')) {
+      const result = token.type === Types.TAG_START && (tokens.test(Types.SYMBOL, 'else') || tokens.test(Types.SYMBOL, 'empty') || tokens.test(Types.SYMBOL, 'endfor'))
+      if (result && (tokens.test(Types.SYMBOL, 'else') || tokens.test(Types.SYMBOL, 'empty'))) {
         elseTagStartToken = token
       }
       return result
     })
 
-    if (tokens.nextIf(Types.SYMBOL, 'else')) {
+    if (tokens.nextIf(Types.SYMBOL, 'else') || tokens.nextIf(Types.SYMBOL, 'empty')) {
+      forStatement.otherwiseText = tokens.la(-1).text
       tokens.expect(Types.TAG_END)
       elseTagEndToken = tokens.la(-1)
       forStatement.otherwise = parser.parse((tokenText, token, tokens) => {

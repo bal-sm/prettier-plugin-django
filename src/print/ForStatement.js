@@ -1,5 +1,5 @@
-import { group, indent, line, hardline, concat } from './../util/prettier-doc-builders.js'
-import { EXPRESSION_NEEDED, isWhitespaceNode, indentWithHardline } from '../util'
+import { EXPRESSION_NEEDED, indentWithHardline, isWhitespaceNode } from '../util'
+import { concat, group, hardline, indent, line } from './../util/prettier-doc-builders.js'
 
 const printFor = (node, path, print) => {
   const parts = [node.trimLeft ? '{%-' : '{%', ' for ']
@@ -9,6 +9,12 @@ const printFor = (node, path, print) => {
   parts.push(path.call(print, 'valueTarget'), ' in ', path.call(print, 'sequence'))
   if (node.condition) {
     parts.push(indent(concat([line, 'if ', path.call(print, 'condition')])))
+  }
+  if (node.reversed) {
+    parts.push(' reversed')
+  }
+  if (node.sorted) {
+    parts.push(' sorted')
   }
   parts.push(concat([' ', node.trimRightFor ? '-%}' : '%}']))
   return group(concat(parts))
@@ -23,7 +29,7 @@ export const printForStatement = (node, path, print) => {
     parts.push(indentWithHardline(printedChildren))
   }
   if (node.otherwise) {
-    parts.push(hardline, node.trimLeftElse ? '{%-' : '{%', ' else ', node.trimRightElse ? '-%}' : '%}')
+    parts.push(hardline, node.trimLeftElse ? '{%-' : '{%', ' ' + node.otherwiseText + ' ', node.trimRightElse ? '-%}' : '%}')
     const printedOtherwise = path.call(print, 'otherwise')
     parts.push(indentWithHardline(printedOtherwise))
   }

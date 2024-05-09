@@ -1,7 +1,7 @@
-import { group, concat, line, softline, indent } from './../util/prettier-doc-builders'
 import { Node } from 'melody-types'
-import { EXPRESSION_NEEDED, STRING_NEEDS_QUOTES, INSIDE_OF_STRING, GROUP_TOP_LEVEL_LOGICAL, IS_ROOT_LOGICAL_EXPRESSION, firstValueInAncestorChain, findParentNode, wrapExpressionIfNeeded } from '../util'
+import { EXPRESSION_NEEDED, GROUP_TOP_LEVEL_LOGICAL, INSIDE_OF_STRING, IS_ROOT_LOGICAL_EXPRESSION, STRING_NEEDS_QUOTES, findParentNode, firstValueInAncestorChain, wrapExpressionIfNeeded } from '../util'
 import { extension as coreExtension } from './../melody-extension-core/src'
+import { concat, group, indent, line, softline } from './../util/prettier-doc-builders'
 const ALREADY_INDENTED = Symbol('ALREADY_INDENTED')
 const OPERATOR_PRECEDENCE = Symbol('OPERATOR_PRECEDENCE')
 const NO_WHITESPACE_AROUND = ['..']
@@ -44,7 +44,7 @@ const otherNeedsParentheses = (node, otherProp) => {
   return otherPrecedence < ownPrecedence || (otherPrecedence > ownPrecedence && isBinaryOther && hasLogicalOperator(other)) || Node.isFilterExpression(other) || (Node.isBinaryConcatExpression(node) && Node.isConditionalExpression(other))
 }
 
-const _printBinaryExpression = (node, path, print) => {
+const _printBinaryExpression = (node, path, print, options) => {
   node[EXPRESSION_NEEDED] = false
   node[STRING_NEEDS_QUOTES] = true
 
@@ -72,8 +72,8 @@ const _printBinaryExpression = (node, path, print) => {
   const printedRight = path.call(print, 'right')
 
   const parts = []
-  const leftNeedsParens = otherNeedsParentheses(node, 'left')
-  const rightNeedsParens = otherNeedsParentheses(node, 'right')
+  const leftNeedsParens = otherNeedsParentheses(node, 'left') && options['templateType'] != 'django'
+  const rightNeedsParens = otherNeedsParentheses(node, 'right') && options['templateType'] != 'django'
 
   if (leftNeedsParens) {
     parts.push('(')
@@ -105,5 +105,5 @@ export const printBinaryExpression = (node, path, print, options) => {
   if (Node.isBinaryConcatExpression(node) && node.wasImplicitConcatenation) {
     return printInterpolatedString(node, path, print, options)
   }
-  return _printBinaryExpression(node, path, print)
+  return _printBinaryExpression(node, path, print, options)
 }

@@ -129,6 +129,9 @@ export class ForStatement extends Node {
     this.condition = condition
     this.body = body
     this.otherwise = otherwise
+    this.otherwiseText = 'else' //else or empty
+    this.reversed = false
+    this.sorted = false
   }
 }
 type(ForStatement, 'ForStatement')
@@ -163,11 +166,12 @@ export class IfStatement extends Node {
     this.test = test
     this.consequent = consequent
     this.alternate = alternate
+    this.elseifText = 'elseif' //elseif or elif
   }
 }
 type(IfStatement, 'IfStatement')
 alias(IfStatement, 'Statement', 'Conditional')
-visitor(IfStatement, 'test', 'consequent', 'alternate')
+visitor(IfStatement, 'test', 'consequent', 'alternate', 'elseifText')
 
 export class IncludeStatement extends Node {
   constructor(source /* : Node */) {
