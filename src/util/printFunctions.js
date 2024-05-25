@@ -1,8 +1,12 @@
-import { line, indent, concat, group } from './prettier-doc-builders.js'
 import { Node } from 'melody-types'
+import { concat, group, indent, line } from './prettier-doc-builders.js'
 
 const noSpaceBeforeToken = {
-  ',': true
+  ',': true,
+  '=': true,
+}
+const noSpaceAfterToken = {
+  '=': true
 }
 
 export const printSingleTwigTag = (node, path, print) => {
@@ -13,11 +17,13 @@ export const printSingleTwigTag = (node, path, print) => {
     parts.push(' ', printedParts[0])
   }
   const indentedParts = []
+  let beforeTokenText = ''
   for (let i = 1; i < node.parts.length; i++) {
     const part = node.parts[i]
     const isToken = Node.isGenericToken(part)
-    const separator = isToken && noSpaceBeforeToken[part.tokenText] ? '' : line
+    const separator = ((isToken && noSpaceBeforeToken[part.tokenText]) || noSpaceAfterToken[beforeTokenText]) ? '' : line
     indentedParts.push(separator, printedParts[i])
+    beforeTokenText = part.tokenText
   }
   if (node.parts.length > 1) {
     parts.push(indent(concat(indentedParts)))

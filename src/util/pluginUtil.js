@@ -38,7 +38,8 @@ const tryLoadPlugin = pluginPath => {
   try {
     const projectRoot = getProjectRoot()
     const requirePath = resolve.sync(path.resolve(projectRoot, pluginPath))
-    return eval('require')(requirePath)
+    // return eval('require')(requirePath)
+    return require(requirePath)
   } catch (e) {
     console.error('Could not load plugin path ' + pluginPath)
     return undefined
@@ -68,4 +69,5 @@ const getAdditionalMelodyExtensions = pluginPaths => {
   return result.filter(elem => !!elem)
 }
 
-export { getPluginPathsFromOptions, tryLoadPlugin, loadPlugins, getAdditionalMelodyExtensions }
+export { getAdditionalMelodyExtensions, getPluginPathsFromOptions, loadPlugins, tryLoadPlugin }
+
