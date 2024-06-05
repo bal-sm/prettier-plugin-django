@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Types, setStartFromToken, setEndFromToken, hasTagStartTokenTrimLeft, hasTagEndTokenTrimRight } from '../../../melody-parser/src/'
+import { Types, hasTagEndTokenTrimRight, hasTagStartTokenTrimLeft, setEndFromToken, setStartFromToken } from '../../../melody-parser/src/'
 import { AutoescapeBlock } from './../types'
 
 export const AutoescapeParser = {
@@ -45,6 +45,12 @@ I expected the current string to end with a ${stringStartToken.text} but instead
       openingTagEndToken = tokens.la(0)
     } else if (tokens.nextIf(Types.TRUE)) {
       escapeType = true
+      openingTagEndToken = tokens.la(0)
+    } else if (tokens.nextIf(Types.SYMBOL, "on")) {
+      escapeType = 'on'
+      openingTagEndToken = tokens.la(0)
+    } else if (tokens.nextIf(Types.SYMBOL, "off")) {
+      escapeType = 'off'
       openingTagEndToken = tokens.la(0)
     } else {
       parser.error({

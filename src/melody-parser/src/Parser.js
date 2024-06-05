@@ -155,6 +155,13 @@ export default class Parser {
         case Types.TAG_START:
           p.add(this.matchTag())
           break
+        case Types.STRING: {
+          if (test) {
+            const textStringLiteral = createNode(n.StringLiteral, token, token.text)
+            p.add(textStringLiteral)
+          }
+          break
+        }
         case Types.TEXT: {
           const textStringLiteral = createNode(n.StringLiteral, token, token.text)
           const textTextStatement = createNode(n.PrintTextStatement, token, textStringLiteral)

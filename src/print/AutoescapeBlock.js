@@ -1,8 +1,14 @@
-import { concat, hardline } from './../util/prettier-doc-builders'
 import { printChildBlock, quoteChar } from '../util'
+import { concat, hardline } from './../util/prettier-doc-builders'
 
 const createOpener = (node, options) => {
-  return concat([node.trimLeft ? '{%-' : '{%', ' autoescape ', quoteChar(options), node.escapeType || 'html', quoteChar(options), ' ', node.trimRightAutoescape ? '-%}' : '%}'])
+  let escapeType = node.escapeType, escapeTypeParts
+  if (escapeType == 'on' || escapeType == 'off') {
+    escapeTypeParts = [escapeType]
+  } else {
+    escapeTypeParts = [quoteChar(options), node.escapeType || 'html', quoteChar(options)]
+  }
+  return concat([node.trimLeft ? '{%-' : '{%', ' autoescape ', ...escapeTypeParts, ' ', node.trimRightAutoescape ? '-%}' : '%}'])
 }
 
 export const printAutoescapeBlock = (node, path, print, options) => {
